@@ -1,0 +1,757 @@
+<!DOCTYPE html>
+<html lang="sv">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Glasskalkylator — Gelato-nivå</title>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,300;9..144,500;9..144,700&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #eef3f7;
+    --bg-card: #faf9f6;
+    --ink: #1a2230;
+    --ink-soft: #5a6577;
+    --accent: #6b4a9e;
+    --accent-vanilj: #c89a3d;
+    --accent-choklad: #5a3a26;
+    --accent-jordgubb: #c84763;
+    --accent-passion: #d89a1f;
+    --accent-kokos: #8a7a5c;
+    --accent-kaffe: #6b4226;
+    --line: #d4dae3;
+    --cream: #e8c8a8;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body {
+    font-family: 'Fraunces', Georgia, serif;
+    background: var(--bg);
+    background-image:
+      radial-gradient(circle at 15% 10%, rgba(184,212,227,0.35) 0, transparent 45%),
+      radial-gradient(circle at 85% 90%, rgba(232,200,168,0.25) 0, transparent 50%);
+    color: var(--ink);
+    min-height: 100vh;
+    padding: 0 0 60px;
+    line-height: 1.4;
+  }
+  body.theme-vanilj { --accent: var(--accent-vanilj); }
+  body.theme-choklad { --accent: var(--accent-choklad); }
+  body.theme-jordgubb { --accent: var(--accent-jordgubb); }
+  body.theme-passion { --accent: var(--accent-passion); }
+  body.theme-kokos { --accent: var(--accent-kokos); }
+  body.theme-kaffe { --accent: var(--accent-kaffe); }
+  .wrap { max-width: 560px; margin: 0 auto; padding: 0 16px; }
+  .hero {
+    position: relative;
+    width: 100%;
+    aspect-ratio: 16 / 9;
+    overflow: hidden;
+    background: linear-gradient(135deg, #2c1810 0%, #4a2c1a 40%, #8b6b4a 100%);
+    margin-bottom: 28px;
+    border-bottom: 1px solid var(--line);
+    transition: background 0.5s;
+  }
+  body.theme-vanilj .hero { background: linear-gradient(135deg, #3a2818 0%, #7a5a30 50%, #d4a85a 100%); }
+  body.theme-choklad .hero { background: linear-gradient(135deg, #1a0e08 0%, #3a2218 50%, #6b4530 100%); }
+  body.theme-jordgubb .hero { background: linear-gradient(135deg, #2a0e16 0%, #6a2030 50%, #c84763 100%); }
+  body.theme-passion .hero { background: linear-gradient(135deg, #2a1a08 0%, #7a5a18 40%, #f0c040 100%); }
+  body.theme-kokos .hero { background: linear-gradient(135deg, #2a2218 0%, #5a4a38 40%, #d4c4a0 100%); }
+  body.theme-kaffe .hero { background: linear-gradient(135deg, #1a0e06 0%, #3a2412 50%, #6b4226 100%); }
+  .hero::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background-image:
+      radial-gradient(circle at 30% 40%, rgba(232,200,168,0.3) 0, transparent 35%),
+      radial-gradient(circle at 70% 60%, rgba(184,212,227,0.2) 0, transparent 40%);
+  }
+  .hero::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(to bottom, rgba(26,34,48,0) 30%, rgba(26,34,48,0.6) 70%, rgba(238,243,247,0.95) 100%);
+    pointer-events: none;
+  }
+  .hero-title {
+    position: absolute;
+    bottom: 26px;
+    left: 22px;
+    right: 22px;
+    color: #faf9f6;
+    z-index: 1;
+    text-shadow: 0 2px 16px rgba(0,0,0,0.7), 0 1px 3px rgba(0,0,0,0.6);
+  }
+  .hero-title h1 {
+    font-weight: 500;
+    font-size: 48px;
+    letter-spacing: -0.02em;
+    font-style: italic;
+    line-height: 0.98;
+  }
+  .hero-title .sub {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 12px;
+    text-transform: uppercase;
+    letter-spacing: 0.22em;
+    margin-top: 10px;
+    color: var(--cream);
+    font-weight: 600;
+  }
+  @media (max-width: 380px) {
+    .hero-title h1 { font-size: 38px; }
+  }
+  .tabs {
+    display: grid;
+    grid-template-columns: repeat(6, 1fr);
+    gap: 0;
+    margin-bottom: 14px;
+    background: var(--bg-card);
+    border: 1px solid var(--line);
+    border-radius: 4px;
+    overflow: hidden;
+  }
+  .tabs button {
+    padding: 14px 2px;
+    background: transparent;
+    border: none;
+    font-family: 'Fraunces', Georgia, serif;
+    font-size: 15px;
+    font-weight: 500;
+    color: var(--ink-soft);
+    cursor: pointer;
+    transition: all 0.2s;
+    font-style: italic;
+  }
+  .tabs button.active {
+    background: var(--accent);
+    color: var(--bg);
+  }
+  .card {
+    background: var(--bg-card);
+    border: 1px solid var(--line);
+    border-radius: 6px;
+    padding: 18px 16px;
+    margin-bottom: 14px;
+    box-shadow: 0 1px 2px rgba(26,34,48,0.04);
+  }
+  .card-title {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 10px;
+    text-transform: uppercase;
+    letter-spacing: 0.2em;
+    color: var(--ink-soft);
+    margin-bottom: 12px;
+  }
+  .vol-stepper {
+    display: grid;
+    grid-template-columns: 52px 1fr 52px;
+    gap: 8px;
+    align-items: stretch;
+    margin-bottom: 12px;
+  }
+  .step-btn {
+    background: var(--ink);
+    color: var(--bg);
+    border: none;
+    border-radius: 6px;
+    font-size: 28px;
+    font-weight: 300;
+    cursor: pointer;
+    user-select: none;
+    -webkit-tap-highlight-color: transparent;
+    transition: transform 0.08s, background 0.15s;
+    box-shadow: 0 2px 6px rgba(26,34,48,0.15);
+  }
+  .step-btn:active { transform: scale(0.94); background: var(--accent); }
+  .vol-display {
+    background: var(--bg);
+    border: 1px solid var(--line);
+    border-radius: 6px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 0 12px;
+  }
+  .vol-display input[type="number"] {
+    border: none;
+    background: transparent;
+    text-align: center;
+    font-size: 30px;
+    font-weight: 600;
+    padding: 14px 0;
+    width: 100%;
+    color: var(--ink);
+    font-family: 'JetBrains Mono', monospace;
+    -moz-appearance: textfield;
+  }
+  .vol-display input[type="number"]::-webkit-outer-spin-button,
+  .vol-display input[type="number"]::-webkit-inner-spin-button {
+    -webkit-appearance: none; margin: 0;
+  }
+  .vol-display input[type="number"]:focus { outline: none; }
+  .vol-unit {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 13px;
+    color: var(--ink-soft);
+    margin-left: 6px;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+  }
+  .vol-presets {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 6px;
+  }
+  .preset-btn {
+    padding: 10px 0;
+    background: transparent;
+    border: 1px solid var(--line);
+    border-radius: 4px;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 13px;
+    color: var(--ink-soft);
+    cursor: pointer;
+    -webkit-tap-highlight-color: transparent;
+    transition: all 0.15s;
+  }
+  .preset-btn:active { transform: scale(0.96); }
+  .preset-btn.active {
+    background: var(--accent);
+    color: var(--bg-card);
+    border-color: var(--accent);
+    font-weight: 600;
+  }
+  .wilfa-note {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 10px;
+    color: var(--ink-soft);
+    margin-top: 10px;
+    padding: 8px 10px;
+    background: var(--bg);
+    border-left: 2px solid var(--accent);
+    border-radius: 3px;
+    line-height: 1.5;
+  }
+  .wilfa-note.warn { color: var(--accent-jordgubb); border-left-color: var(--accent-jordgubb); }
+  .recipe {
+    background: var(--ink);
+    color: var(--bg);
+    border-radius: 6px;
+    padding: 24px 20px;
+    box-shadow: 0 4px 16px rgba(26,34,48,0.22);
+    background-image: radial-gradient(circle at 90% 0%, rgba(232,200,168,0.1) 0, transparent 50%);
+  }
+  .recipe-head {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 16px;
+  }
+  .recipe-title {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 10px;
+    text-transform: uppercase;
+    letter-spacing: 0.25em;
+    color: var(--cream);
+  }
+  .round-btn {
+    background: var(--bg-card);
+    border: 1px solid var(--bg-card);
+    color: var(--ink);
+    padding: 8px 16px;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 11px;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.18em;
+    border-radius: 999px;
+    cursor: pointer;
+    -webkit-tap-highlight-color: transparent;
+    transition: all 0.15s;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.25);
+  }
+  .round-btn:active { transform: scale(0.96); }
+  .round-btn.active {
+    background: var(--cream);
+    color: var(--ink);
+    border-color: var(--cream);
+  }
+  .ingr {
+    display: flex;
+    justify-content: space-between;
+    align-items: baseline;
+    padding: 11px 0;
+    border-bottom: 1px dashed rgba(250,249,246,0.15);
+  }
+  .ingr:last-of-type { border-bottom: none; }
+  .ingr-name { font-size: 16px; font-weight: 500; }
+  .ingr-amt {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 18px;
+    font-weight: 600;
+    white-space: nowrap;
+  }
+  .ingr-amt span {
+    font-size: 12px;
+    color: var(--cream);
+    margin-left: 3px;
+    font-weight: 400;
+  }
+  .sub-recipe-title {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 10px;
+    color: var(--cream);
+    text-transform: uppercase;
+    letter-spacing: 0.2em;
+    margin: 6px 0 4px;
+    padding-top: 10px;
+    border-top: 1px solid rgba(250,249,246,0.15);
+  }
+  .total {
+    margin-top: 14px;
+    padding-top: 14px;
+    border-top: 1px solid rgba(250,249,246,0.25);
+    display: flex;
+    justify-content: space-between;
+    align-items: baseline;
+  }
+  .total-label {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 10px;
+    text-transform: uppercase;
+    letter-spacing: 0.2em;
+    color: var(--cream);
+  }
+  .total-amt {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 22px;
+    font-weight: 600;
+  }
+  .stats {
+    margin-top: 16px;
+    padding-top: 14px;
+    border-top: 1px dashed rgba(250,249,246,0.15);
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 11px;
+    color: rgba(250,249,246,0.65);
+    text-align: center;
+    letter-spacing: 0.06em;
+    line-height: 1.9;
+  }
+  .stats span { color: var(--cream); font-weight: 600; }
+  .steps {
+    margin-top: 14px;
+    background: var(--bg-card);
+    border: 1px solid var(--line);
+    border-radius: 6px;
+    padding: 18px 16px;
+  }
+  .steps ol {
+    margin: 0;
+    padding-left: 18px;
+    font-size: 14px;
+    line-height: 1.6;
+    color: var(--ink);
+  }
+  .steps li { margin-bottom: 8px; }
+  .steps li:last-child { margin-bottom: 0; }
+  .steps li strong {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 12px;
+    color: var(--accent);
+    font-weight: 600;
+  }
+</style>
+</head>
+<body class="theme-vanilj">
+<div class="hero">
+  <div class="hero-title">
+    <h1 id="heroTitle">Vanilj</h1>
+    <div class="sub">Gelato-nivå · Wilfa C15</div>
+  </div>
+</div>
+<div class="wrap">
+
+  <div class="tabs">
+    <button class="active" data-recipe="vanilj">Vanilj</button>
+    <button data-recipe="choklad">Choklad</button>
+    <button data-recipe="jordgubb">Jordgubb</button>
+    <button data-recipe="passion">Passion</button>
+    <button data-recipe="kokos">Kokos</button>
+    <button data-recipe="kaffe">Kaffe</button>
+  </div>
+
+  <div class="card">
+    <div class="card-title">Total bas-vikt</div>
+    <div class="vol-stepper">
+      <button class="step-btn" id="volMinus" type="button">−</button>
+      <div class="vol-display">
+        <input type="number" id="volume" value="700" min="400" step="50" inputmode="numeric">
+        <span class="vol-unit">g</span>
+      </div>
+      <button class="step-btn" id="volPlus" type="button">+</button>
+    </div>
+    <div class="vol-presets" id="volPresets">
+      <button class="preset-btn" data-vol="500" type="button">500</button>
+      <button class="preset-btn" data-vol="600" type="button">600</button>
+      <button class="preset-btn active" data-vol="700" type="button">700</button>
+      <button class="preset-btn" data-vol="800" type="button">800</button>
+    </div>
+    <div class="wilfa-note" id="wilfaNote">✓ I Wilfa C15 sweet spot (60–70% fyllnad, optimal overrun)</div>
+  </div>
+
+  <div class="recipe">
+    <div class="recipe-head">
+      <div class="recipe-title" id="recipeTitle">Recept · Vanilj</div>
+      <button class="round-btn" id="roundBtn" type="button">Avrunda</button>
+    </div>
+    <div id="ingredients"></div>
+    <div class="total">
+      <div class="total-label">Total bas</div>
+      <div class="total-amt" id="amtTotal">700<span style="font-size:12px;color:var(--cream);margin-left:4px;">g</span></div>
+    </div>
+    <div class="stats" id="stats"></div>
+  </div>
+
+  <div class="steps">
+    <div class="card-title" id="stepsTitle">Tillvägagångssätt</div>
+    <ol id="stepsList"></ol>
+  </div>
+
+</div>
+
+<script>
+const RECIPES = {
+  vanilj: {
+    label: 'Vanilj',
+    base: 698,
+    items: [
+      { name: 'Grädde 36%', g: 215 },
+      { name: 'Mjölk 3%', g: 275 },
+      { name: 'Skummjölkspulver', g: 30 },
+      { name: 'Strösocker', g: 95 },
+      { name: 'Glykossirap', g: 30 },
+      { name: 'Flytande äggula', g: 50 },
+      { name: 'Bladgelatin', g: 2.5 },
+      { name: 'Vaniljextrakt (eller 2g vaniljpulver)', g: 10 },
+      { name: 'Salt', g: 1 }
+    ],
+    stats: { 'Fett': '14.7%', 'Socker': '17.8%', 'MSNF': '8.5%', 'TS': '~42%', 'PAC': '~26' },
+    mognad: '12h',
+    steps: [
+      'Gelatin i kallt vatten 10 min. Krama ur när den är mjuk.',
+      'Vispa skummjölkspulver kallt i grädde+mjölk i kastrull (annars klumpar). Om vaniljpulver: vispa i nu.',
+      'Vispa flytande äggula + strösocker + glykossirap + salt slätt i en bunke.',
+      'Rör ner ägg-blandningen i den kalla gräddmjölken i kastrullen (allt kallt mot kallt — ingen tempering behövs).',
+      'Värm under konstant omrörning till <strong>83°C</strong> (flytande äggula tål inte mer, curdling-risk).',
+      'Av plattan → smält gelatin i. Om vaniljextrakt: tillsätt nu (värme förångar smakämnena).',
+      'Sila genom finmaskig sil. Kyl snabbt över isvattenbad.',
+      'Mogna i kyl <strong>minst 12h</strong>. Vispa upp innan churning.',
+      'Wilfa: 30–35 min till soft-serve. Frys 4h för fast skopglass.'
+    ]
+  },
+  choklad: {
+    label: 'Choklad',
+    base: 701,
+    items: [
+      { name: 'Grädde 36%', g: 150 },
+      { name: 'Mjölk 3%', g: 285 },
+      { name: 'Skummjölkspulver', g: 20 },
+      { name: 'Mörk choklad 70%', g: 90 },
+      { name: 'Kakao (holländsk)', g: 20 },
+      { name: 'Strösocker', g: 65 },
+      { name: 'Glykossirap', g: 30 },
+      { name: 'Flytande äggula', g: 40 },
+      { name: 'Bladgelatin', g: 2.5 },
+      { name: 'Salt', g: 1 }
+    ],
+    stats: { 'Fett': '16.5%', 'Socker': '16.4%', 'MSNF': '~6%', 'TS': '~46%', 'PAC': '~25' },
+    mognad: '24h',
+    steps: [
+      'Gelatin i kallt vatten 10 min.',
+      'Vispa skummjölkspulver + kakao kallt i grädde+mjölk. Värm till 75°C, vispa botten kontinuerligt (kakao bränns lätt).',
+      'Av plattan, häll över hackad choklad i en bunke. Vispa slätt.',
+      'Vispa flytande äggula + socker + dextros + salt. Tempera.',
+      'Tillbaka i kastrullen. <strong>83°C</strong> — gå efter TEMP, inte konsistens (chokladbasen luras tjock tidigt).',
+      'Av plattan → smält gelatinet i.',
+      'Sila → isbad → kyl <strong>minst 24h</strong> (choklad behöver det extra dygnet, smaken djupnar markant).',
+      'Wilfa: 35–40 min (chokladbas tar längre p.g.a. högre TS).',
+      'Frys 4h. Servera vid -14°C för bästa smakupplevelse.'
+    ]
+  },
+  jordgubb: {
+    label: 'Jordgubb',
+    base: 701,
+    concentrate: {
+      title: 'Bär-koncentrat (gör först, dagen innan)',
+      items: [
+        { name: 'Jordgubbar (rensad vikt)', g: 390 },
+        { name: 'Strösocker', g: 60 },
+        { name: 'Citronsaft', g: 12 }
+      ],
+      note: 'Macerera 30 min, mosa lätt, koka in till 235 g (volymen halveras, sirapig). Kyl över natt.'
+    },
+    items: [
+      { name: 'Grädde 36%', g: 155 },
+      { name: 'Mjölk 3%', g: 170 },
+      { name: 'Skummjölkspulver', g: 20 },
+      { name: 'Strösocker (i basen)', g: 45 },
+      { name: 'Glykossirap', g: 35 },
+      { name: 'Flytande äggula', g: 30 },
+      { name: 'Bladgelatin', g: 2.5 },
+      { name: 'Salt', g: 1 },
+      { name: '+ Bär-koncentrat (kallt)', g: 235, fromConcentrate: true }
+    ],
+    stats: { 'Fett': '10.1%', 'Socker': '21.5%', 'PAC': '~30', 'TS': '~38%' },
+    mognad: '12h + koncentrat dagen innan',
+    steps: [
+      '<strong>Dag 1:</strong> Macerera bär + socker + citron 30 min. Mosa lätt. Koka in tills volymen halverats (~235g, sirapig). Kyl över natt.',
+      '<strong>Dag 2:</strong> Gelatin i kallt vatten 10 min. Krama ur.',
+      'Vispa skummjölkspulver kallt i grädde+mjölk (annars klumpar). Värm till 70°C.',
+      'Vispa flytande äggula + socker + dextros + salt. Tempera, tillbaka, <strong>83°C</strong>.',
+      'Av plattan → smält gelatin i. Sila → isbad → kyl <strong>12h</strong>.',
+      'Strax före churning: rör ner kallt bär-koncentrat i den kalla crème-basen. Smaka av.',
+      'Vill du chunks → spara 50g koncentrat och swirl:a via lockets öppning sista 1 min.',
+      'Wilfa: 30–35 min. Frys 4h.'
+    ]
+  },
+  passion: {
+    label: 'Passion',
+    base: 663,
+    items: [
+      { name: 'Grädde 36%', g: 137.5 },
+      { name: 'Mjölk 3%', g: 112.5 },
+      { name: 'Passionsfruktspuré (reducerad, silad)', g: 250 },
+      { name: 'Strösocker', g: 90 },
+      { name: 'Flytande äggula', g: 60 },
+      { name: 'Glukossirap', g: 12.5 },
+      { name: 'Bladgelatin', g: 0.85 }
+    ],
+    stats: { 'Fett': '11.0%', 'Socker tillsatt': '15.1%', 'PAC': '~32', 'Äggula': '9%' },
+    mognad: '12h',
+    steps: [
+      '<strong>Förbered passion (dagen innan eller minst 4h innan):</strong> Tina fryst passionsfrukt. Koka upp, sila bort kärnor (frön ger grynig textur i glass). Reducera puré tills du har 250g koncentrerad smak. <strong>Kyl helt</strong> — passion får ALDRIG värmas tillsammans med mjölken (citronsyran curdlar proteinerna vid 60°C+).',
+      'Gelatin i kallt vatten 10 min. Krama ur.',
+      'Värm grädde + mjölk till 70°C.',
+      'Vispa flytande äggula + strösocker + glukossirap slätt.',
+      'Tempera: häll varm gräddmjölk i tunn stråle över äggsmeten under vispning.',
+      'Tillbaka i kastrullen. <strong>83°C</strong>.',
+      'Av plattan → smält gelatin i. Sila → isbad → kyl <strong>12h</strong>.',
+      'Strax före churning: <strong>rör ner KALL passion-puré i KALL crème-bas</strong>. Smaka av.',
+      'Wilfa 30–35 min. Frys 4h.'
+    ]
+  },
+  kokos: {
+    label: 'Kokos',
+    base: 663,
+    items: [
+      { name: 'Grädde 36%', g: 137.5 },
+      { name: 'Mjölk 3%', g: 112.5 },
+      { name: 'Reducerad kokosmjölk (från ~500g)', g: 250 },
+      { name: 'Strösocker', g: 90 },
+      { name: 'Flytande äggula', g: 60 },
+      { name: 'Glukossirap', g: 12.5 },
+      { name: 'Bladgelatin', g: 2.5 },
+      { name: 'Rostad kokosflakes (valfritt, sista 2 min)', g: 25 }
+    ],
+    stats: { 'Fett': '~19%', 'Socker tillsatt': '15.1%', 'PAC': '~17 (lågt)', 'Notering': 'Rik, ta ut 10 min innan servering' },
+    mognad: '12h',
+    steps: [
+      '<strong>Köp rätt kokosmjölk:</strong> Aroy-D Premium, Chaokoh eller annan högkvalitativ canned med 17–22% fett. <strong>INTE light</strong> och inte sockrad kokosdryck — för mycket vatten, för lite smak.',
+      '<strong>Reducera (dagen innan):</strong> Koka ~500g kokosmjölk i låg värme under omrörning tills du har 250g koncentrat. Smakar nu påtagligt kokos. Kyl helt.',
+      '<strong>Rosta kokosflakes (valfritt men gör glassen):</strong> Torrosta i panna eller ugn 175°C tills gyllenbruna, 5–8 min. Rör/vänd ofta — bränns snabbt. Kyl.',
+      'Gelatin i kallt vatten 10 min.',
+      'Värm grädde + mjölk + kall kokoskoncentratet tillsammans till 70°C (ingen curdling-risk — kokos är inte syrligt, till skillnad från passion).',
+      'Vispa flytande äggula + socker + glukossirap. Tempera, tillbaka, <strong>83°C</strong>.',
+      'Gelatin i. Sila → isbad → mogna <strong>12h</strong>.',
+      'Wilfa 30 min. <strong>Sista 2 min:</strong> häll in rostad kokos via lockets öppning.',
+      'Frys 4h.'
+    ],
+    note: 'Mer gelatin (1.5 blad) än passion eftersom kokos saknar passions naturliga syra som hjälper proteinstrukturen — behöver mer för att binda. PAC är lågt (~17) eftersom kokos saknar naturligt frukt-socker (passion har fruktos PAC 190) → glassen blir hårdare ur frys. <strong>Tweak om du vill mjukare:</strong> byt 30g av sockret mot glykossirap → PAC ~24, smakar lika sött.'
+  },
+  kaffe: {
+    label: 'Kaffe',
+    base: 768,
+    items: [
+      { name: 'Grädde 36%', g: 275 },
+      { name: 'Kaffemjölk (mjölk 3% + infusionerat kaffe)', g: 225 },
+      { name: 'Strösocker', g: 120 },
+      { name: 'Flytande äggula', g: 120 },
+      { name: 'Glukossirap', g: 25 },
+      { name: 'Bladgelatin', g: 3.4 },
+      { name: 'Mald kaffe (för infusion, filtreras bort)', g: 35 }
+    ],
+    stats: { 'Fett': '18.9%', 'Socker': '18.2%', 'Äggula': '15.6%', 'MSNF': '~2.6%', 'PAC': '~20' },
+    mognad: '12h',
+    steps: [
+      '<strong>Förbered kaffemjölk:</strong> Värm 250–280g mjölk (3%) med 35g malt kaffe (frystorkat funkar också men färskmalet är bättre). Värm till strax under kokpunkten, dra av plattan, låt dra 10–15 min. Filtrera genom kaffefilter. <strong>Mät upp 225g kaffemjölk</strong> — fyll på med mer vanlig mjölk om för lite, eller starta om med mer mjölk om mycket förlorat i kaffegrumset.',
+      'Gelatin i kallt vatten 10 min. Krama ur.',
+      'Värm grädde + kaffemjölken till 70°C.',
+      'Vispa flytande äggula + strösocker + glukossirap slätt.',
+      'Tempera: häll varm gräddmjölk i tunn stråle över äggsmeten under vispning.',
+      'Tillbaka i kastrullen. <strong>83°C</strong>. Hög äggula-andel = tjocknar snabbt — håll koll, vispa konstant.',
+      'Av plattan → smält gelatin i. Sila → isbad → kyl <strong>12h</strong>.',
+      'Wilfa 30–35 min. Frys 4h.'
+    ],
+    note: '<strong>Sweet spot-flaggor i din recept (info, inte korrigeringar):</strong><br>• <strong>Äggula 15.6%</strong> (~157 g/L) är klassisk italiensk caffè-gelato-stil, mycket rik. Om den känns för tung — sänk till 90g (12% / 117 g/L).<br>• <strong>Gelatin 4.4 g/kg</strong> är över gelato-zon 2–3 g/kg → risk för gummikänsla efter 3+ dagar i frys. 1.5 blad (2.5g) räcker tekniskt.<br>• <strong>MSNF ~2.6%</strong> är lågt (zon 8–11%), men den höga äggulan + grädden kompenserar med proteiner och fett. Vill du gå "renare" gelato: lägg till 25g skummjölkspulver och sänk grädden till 250g.'
+  }
+};
+
+const $ = id => document.getElementById(id);
+const vol = $('volume');
+let currentRecipe = 'vanilj';
+let roundMode = false;
+
+function roundG(g) {
+  if (g < 2) return Math.round(g * 10) / 10;
+  if (roundMode) return Math.round(g / 5) * 5;
+  return Math.round(g);
+}
+
+function scaleHalf(val, factor) {
+  return Math.max(0.5, Math.round(val * factor * 2) / 2);
+}
+
+function render() {
+  const r = RECIPES[currentRecipe];
+  const target = Math.max(100, parseFloat(vol.value) || 0);
+
+  // Skala faktor: target / recept-bas (inklusive bär-koncentrat för jordgubb)
+  const factor = target / r.base;
+
+  $('heroTitle').textContent = r.label;
+  $('recipeTitle').textContent = 'Recept · ' + r.label;
+  document.body.className = 'theme-' + currentRecipe;
+
+  // Wilfa-zon check
+  const note = $('wilfaNote');
+  if (target < 400) {
+    note.className = 'wilfa-note warn';
+    note.textContent = '⚠ Under Wilfa min (400g). Visparen får för lite att jobba med.';
+  } else if (target < 600) {
+    note.className = 'wilfa-note';
+    note.textContent = '○ OK men under sweet spot. Mindre overrun än optimalt.';
+  } else if (target <= 750) {
+    note.className = 'wilfa-note';
+    note.textContent = '✓ I Wilfa C15 sweet spot (med +20–30% overrun fyller skålen ~47–50%, säker zon).';
+  } else if (target <= 850) {
+    note.className = 'wilfa-note';
+    note.textContent = '○ Övre gränsen. Med overrun närmar du dig 60% fyllnad — håll koll på lock-öppningen.';
+  } else {
+    note.className = 'wilfa-note warn';
+    note.textContent = '⚠ För hög bas-mängd. Med overrun (+20–30% volym) riskerar du spill via locköppningen och stallad motor. Dela i två satser.';
+  }
+
+  // Bygg ingrediens-HTML
+  let html = '';
+
+  if (r.concentrate) {
+    html += '<div class="sub-recipe-title" style="padding-top:0;border-top:none;margin-top:0;">' + r.concentrate.title + '</div>';
+    r.concentrate.items.forEach(it => {
+      const scaled = it.g * factor;
+      html += '<div class="ingr"><div class="ingr-name">' + it.name + '</div><div class="ingr-amt">' + roundG(scaled) + '<span>g</span></div></div>';
+    });
+    html += '<div style="font-family:JetBrains Mono,monospace;font-size:10px;color:rgba(250,249,246,0.55);padding:8px 0 4px;line-height:1.5;">' + r.concentrate.note + '</div>';
+    html += '<div class="sub-recipe-title">Mejeri-bas (dag 2)</div>';
+  }
+
+  r.items.forEach(it => {
+    let amt, unit;
+    if (it.scaleType === 'half') {
+      amt = scaleHalf(it.g, factor);
+      unit = it.unit || 'st';
+    } else if (it.unit) {
+      amt = Math.max(0.5, Math.round(it.g * factor * 2) / 2);
+      unit = it.unit;
+    } else {
+      amt = roundG(it.g * factor);
+      unit = 'g';
+    }
+    html += '<div class="ingr"><div class="ingr-name">' + it.name + '</div><div class="ingr-amt">' + amt + '<span>' + unit + '</span></div></div>';
+  });
+
+  $('ingredients').innerHTML = html;
+
+  // Total
+  let totalG = 0;
+  r.items.forEach(it => { if (!it.unit) totalG += it.g * factor; });
+  $('amtTotal').innerHTML = Math.round(totalG) + '<span style="font-size:12px;color:var(--cream);margin-left:4px;">g</span>';
+
+  // Stats
+  let statsHtml = '';
+  Object.entries(r.stats).forEach(([k, v], i, arr) => {
+    statsHtml += k + ' <span>' + v + '</span>';
+    if (i < arr.length - 1) statsHtml += ' · ';
+  });
+  statsHtml += '<br>Mognad <span>' + r.mognad + '</span> · Tempering <span>83°C</span> · Wilfa <span>30–40 min</span>';
+  $('stats').innerHTML = statsHtml;
+
+  // Steps
+  $('stepsList').innerHTML = r.steps.map((s, i) =>
+    '<li><strong>' + (i+1) + '.</strong> ' + s + '</li>'
+  ).join('');
+
+  // Optional recipe note
+  let noteEl = document.getElementById('recipeNote');
+  if (r.note) {
+    if (!noteEl) {
+      noteEl = document.createElement('div');
+      noteEl.id = 'recipeNote';
+      noteEl.className = 'wilfa-note';
+      noteEl.style.marginTop = '14px';
+      document.querySelector('.steps').appendChild(noteEl);
+    }
+    noteEl.innerHTML = r.note;
+    noteEl.style.display = 'block';
+  } else if (noteEl) {
+    noteEl.style.display = 'none';
+  }
+}
+
+// Tab-byte
+document.querySelectorAll('.tabs button').forEach(btn => {
+  btn.addEventListener('click', () => {
+    document.querySelectorAll('.tabs button').forEach(b => b.classList.remove('active'));
+    btn.classList.add('active');
+    currentRecipe = btn.dataset.recipe;
+    render();
+  });
+});
+
+// Volym
+$('volMinus').addEventListener('click', () => {
+  vol.value = Math.max(100, parseInt(vol.value) - 50);
+  updatePresets();
+  render();
+});
+$('volPlus').addEventListener('click', () => {
+  vol.value = parseInt(vol.value) + 50;
+  updatePresets();
+  render();
+});
+document.querySelectorAll('.preset-btn').forEach(btn => {
+  btn.addEventListener('click', () => {
+    vol.value = btn.dataset.vol;
+    updatePresets();
+    render();
+  });
+});
+function updatePresets() {
+  const v = parseInt(vol.value);
+  document.querySelectorAll('.preset-btn').forEach(b => {
+    b.classList.toggle('active', parseInt(b.dataset.vol) === v);
+  });
+}
+vol.addEventListener('input', () => { updatePresets(); render(); });
+
+// Avrundning
+$('roundBtn').addEventListener('click', () => {
+  roundMode = !roundMode;
+  $('roundBtn').classList.toggle('active', roundMode);
+  $('roundBtn').textContent = roundMode ? 'Exakt' : 'Avrunda';
+  render();
+});
+
+render();
+</script>
+</body>
+</html>

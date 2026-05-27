@@ -799,7 +799,13 @@ function render() {
       amt = roundG(it.g * factor);
       unit = 'g';
     }
-    html += '<div class="ingr"><div class="ingr-name">' + it.name + '</div><div class="ingr-amt">' + amt + '<span>' + unit + '</span></div></div>';
+    // Specialfall: bladgelatin visar både blad-antal (primärt) och gram (sekundärt)
+    if (it.name === 'Bladgelatin') {
+      const blad = Math.round(it.g * factor / 1.7 * 2) / 2; // halvbladsteg
+      html += '<div class="ingr"><div class="ingr-name">' + it.name + '</div><div class="ingr-amt">' + blad + '<span>blad (' + amt + 'g)</span></div></div>';
+    } else {
+      html += '<div class="ingr"><div class="ingr-name">' + it.name + '</div><div class="ingr-amt">' + amt + '<span>' + unit + '</span></div></div>';
+    }
   });
 
   $('ingredients').innerHTML = html;

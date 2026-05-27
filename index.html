@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Glasskalkylator — Gelato-nivå</title>
+<title>Glasskalkylator</title>
 <link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,300;9..144,500;9..144,700&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet">
 <style>
   :root {
@@ -338,6 +338,9 @@
     line-height: 1.9;
   }
   .stats span { color: var(--cream); font-weight: 600; }
+  .stats .stat-ok { color: #6db86d; }
+  .stats .stat-warn { color: #e8b54a; }
+  .stats .stat-bad { color: #e07080; }
   .steps {
     margin-top: 14px;
     background: var(--bg-card);
@@ -366,7 +369,7 @@
 <div class="hero">
   <div class="hero-title">
     <h1 id="heroTitle">Vanilj</h1>
-    <div class="sub">Gelato-nivå · Wilfa C15</div>
+    <div class="sub">Premium custard-glass · Wilfa C15</div>
   </div>
 </div>
 <div class="wrap">
@@ -420,6 +423,142 @@
 </div>
 
 <script>
+/*
+  PAC/POD-KONVENTION (viktig att läsa innan du ändrar siffror):
+  ----------------------------------------------------------------
+  Vi använder MODERN konvention (Underbelly, Goff, Dream Scoops):
+  laktos räknas in i PAC med faktor 100 (samma som sucrose).
+
+  Italienska skolan (Carpigiani, MEC3) EXKLUDERAR laktos eftersom
+  laktos har begränsad löslighet vid -18°C — antifrys-effekten är
+  partiell. Den ger ~4–5 enheter lägre PAC-värden.
+
+  Båda konventionerna är korrekta. Vi valde modern eftersom:
+  1. Glassen serveras från hemfrys (-15 till -18°C) där mer laktos
+     fortfarande är i lösning än vid restaurang-temp
+  2. Detta är konventionen som online-kalkylatorer använder, så
+     värdena är jämförbara med t.ex. underbelly.is
+
+  PAC-koefficienter:
+    Sucrose=100, Dextros=190, Glykossirap 42DE≈80, Fruktos=190, Laktos=100
+  POD-koefficienter:
+    Sucrose=100, Dextros=70, Glykossirap=50, Fruktos=170, Laktos=16
+
+  MSNF-bidrag per ingrediens:
+    Grädde 36% ≈ 5% MSNF, Mjölk 3% ≈ 8.8% MSNF, SMP = 100% MSNF
+    Av MSNF är ca 54% laktos.
+
+  Om du byter konvention: sänk PAC-värdena i stats med ~4–5 enheter
+  och uppdatera detta block.
+*/
+
+/*
+  CHANGELOG — auto-PAC/POD-räkning (verify.py 2026-05-27)
+  --------------------------------------------------------
+  Gamla hårdkodade stats vs nya auto-räknade (skillnad = old - new):
+
+  Recept    | Fett     | Socker*  | PAC      | Notering
+  ----------|----------|----------|----------|----------------------------------
+  Vanilj    | -0.5     | +4.2     | -4.7     | PAC nu 21.3 = warn (var "26")
+  Choklad   | -0.3     | +4.1     | -5.1     | PAC nu 19.9 = BAD (var "25")
+  Jordgubb  | -0.3     | -1.8     | -5.7     | PAC nu 24.3 OK, MSNF gränsen BAD
+  Passion   | -0.6     | +5.5     | -8.0     | PAC var massivt överskattad
+  Kokos     | +9.0     | +2.2     | ±0       | Fett var dramatiskt underskattat
+  Kaffe     | -0.9     | +2.4     | ±0       | Excludion av kaffe-grums funkar
+
+  *Socker-skillnad: nya värdet inkluderar laktos (per PAC-konvention). Gamla
+   hårdkodade visade bara tillsatt socker → ser nu högre ut, korrekt enligt PAC.
+
+  Kör verify.py för att räkna om efter recept-ändringar.
+*/
+
+// PAC/POD-faktorer per sockertyp (modern konvention med laktos)
+const PAC_FACTOR = { sucrose: 100, dextrose: 190, fructose: 190, glucose_de42: 80, lactose: 100 };
+const POD_FACTOR = { sucrose: 100, dextrose: 70,  fructose: 170, glucose_de42: 50, lactose: 16  };
+
+/*
+  INGREDIENT_DB — referensvärden per ingrediens (namn-matchning).
+  Decimaler = andel av ingrediensens vikt.
+  Items i RECIPES kan override:a med egna fat/msnf/sugars.
+  Saknas en ingrediens i DB:n och har inga override-fält → räknas som 0 (vatten/inert).
+*/
+const INGREDIENT_DB = {
+  'Grädde 36%':                                          { fat: 0.36, msnf: 0.05,  sugars: { lactose: 0.03  } },
+  'Mjölk 3%':                                            { fat: 0.03, msnf: 0.088, sugars: { lactose: 0.046 } },
+  'Kaffemjölk (mjölk 3% + infusionerat kaffe)':          { fat: 0.03, msnf: 0.088, sugars: { lactose: 0.046 } },
+  'Skummjölkspulver':                                    { fat: 0,    msnf: 0.96,  sugars: { lactose: 0.52  } },
+  'Strösocker':                                          { sugars: { sucrose: 1.0 } },
+  'Strösocker (i basen)':                                { sugars: { sucrose: 1.0 } },
+  'Glykossirap':                                         { sugars: { glucose_de42: 0.80 } },
+  'Glukossirap':                                         { sugars: { glucose_de42: 0.80 } },
+  'Flytande äggula':                                     { fat: 0.27 },
+  'Mörk choklad 70%':                                    { fat: 0.40, sugars: { sucrose: 0.30 } },
+  'Kakao (holländsk)':                                   { fat: 0.22 },
+  '+ Bär-koncentrat (kallt)':                            { sugars: { fructose: 0.18 } },
+  'Passionsfruktspuré (reducerad, silad)':               { sugars: { fructose: 0.11 } },
+  'Reducerad kokosmjölk (från ~500g)':                   { fat: 0.40, msnf: 0.04 },
+  'Rostad kokosflakes (valfritt, sista 2 min)':          { fat: 0.65 }
+  // Bladgelatin, Vaniljextrakt, Salt, Mald kaffe (filtreras bort) — räknas som 0
+};
+
+function getIngrProps(item) {
+  const db = INGREDIENT_DB[item.name] || {};
+  return {
+    fat:    item.fat    != null ? item.fat    : (db.fat    || 0),
+    msnf:   item.msnf   != null ? item.msnf   : (db.msnf   || 0),
+    sugars: item.sugars || db.sugars || {}
+  };
+}
+
+// Klassificera värden mot target-zoner (italiensk balansering, fransk-amerikansk hybrid) → 'ok' | 'warn' | 'bad'
+const TARGETS = {
+  pac:     v => v < 20 || v > 32 ? 'bad' : (v >= 22 && v <= 28) ? 'ok' : 'warn',
+  pod:     v => v < 12 || v > 24 ? 'bad' : (v >= 14 && v <= 20) ? 'ok' : 'warn',
+  fat:     v => (v >= 6 && v <= 12) ? 'ok' : v > 20 ? 'bad' : 'warn',
+  msnf:    v => v < 6 || v > 14 ? 'bad' : (v >= 8 && v <= 12) ? 'ok' : 'warn',
+  gelatin: v => v > 3.5 ? 'bad' : (v >= 1.5 && v <= 3) ? 'ok' : 'warn'
+};
+
+/*
+  computeStats(items, totalG)
+  Räknar fat%, sugar%, msnf%, ts%, pac, pod, gelatinPerKg
+  från items[] (med g-vikter) och total bas-vikt.
+*/
+function computeStats(items, totalG) {
+  let fatG = 0, msnfG = 0, gelatinG = 0;
+  const sugarG = { sucrose: 0, dextrose: 0, fructose: 0, glucose_de42: 0, lactose: 0 };
+
+  items.forEach(it => {
+    if (it.excludeFromBase) return; // t.ex. mald kaffe som filtreras bort
+    const p = getIngrProps(it);
+    fatG  += it.g * p.fat;
+    msnfG += it.g * p.msnf;
+    // Laktos från MSNF räknas separat (54% av MSNF är laktos)
+    sugarG.lactose += it.g * p.msnf * 0.54;
+    Object.entries(p.sugars).forEach(([type, frac]) => {
+      if (type === 'lactose') return; // laktos redan räknad via msnf
+      sugarG[type] = (sugarG[type] || 0) + it.g * frac;
+    });
+    if (it.name === 'Bladgelatin') gelatinG += it.g;
+  });
+
+  const addedSugarG = sugarG.sucrose + sugarG.dextrose + sugarG.fructose + sugarG.glucose_de42;
+  const totalSugarG = addedSugarG + sugarG.lactose;
+  const pacRaw = Object.entries(sugarG).reduce((sum, [t, g]) => sum + g * (PAC_FACTOR[t] || 0), 0);
+  const podRaw = Object.entries(sugarG).reduce((sum, [t, g]) => sum + g * (POD_FACTOR[t] || 0), 0);
+
+  return {
+    fat:     fatG / totalG * 100,
+    msnf:    msnfG / totalG * 100,
+    sugar:   totalSugarG / totalG * 100,
+    // TS = fett + MSNF + tillsatta sockerarter (laktos är redan i MSNF) + ~1% övrigt
+    ts:      (fatG + msnfG + addedSugarG) / totalG * 100 + 1,
+    pac:     pacRaw / totalG,
+    pod:     podRaw / totalG,
+    gelatinPerKg: gelatinG / totalG * 1000
+  };
+}
+
 const RECIPES = {
   vanilj: {
     label: 'Vanilj',
@@ -435,7 +574,6 @@ const RECIPES = {
       { name: 'Vaniljextrakt (eller 2g vaniljpulver)', g: 10 },
       { name: 'Salt', g: 1 }
     ],
-    stats: { 'Fett': '14.7%', 'Socker': '17.8%', 'MSNF': '8.5%', 'TS': '~42%', 'PAC': '~26' },
     mognad: '12h',
     steps: [
       'Gelatin i kallt vatten 10 min. Krama ur när den är mjuk.',
@@ -464,13 +602,12 @@ const RECIPES = {
       { name: 'Bladgelatin', g: 2.5 },
       { name: 'Salt', g: 1 }
     ],
-    stats: { 'Fett': '16.5%', 'Socker': '16.4%', 'MSNF': '~6%', 'TS': '~46%', 'PAC': '~25' },
     mognad: '24h',
     steps: [
       'Gelatin i kallt vatten 10 min.',
       'Vispa skummjölkspulver + kakao kallt i grädde+mjölk. Värm till 75°C, vispa botten kontinuerligt (kakao bränns lätt).',
       'Av plattan, häll över hackad choklad i en bunke. Vispa slätt.',
-      'Vispa flytande äggula + socker + dextros + salt. Tempera.',
+      'Vispa flytande äggula + socker + glykossirap + salt. Tempera.',
       'Tillbaka i kastrullen. <strong>83°C</strong> — gå efter TEMP, inte konsistens (chokladbasen luras tjock tidigt).',
       'Av plattan → smält gelatinet i.',
       'Sila → isbad → kyl <strong>minst 24h</strong> (choklad behöver det extra dygnet, smaken djupnar markant).',
@@ -501,13 +638,12 @@ const RECIPES = {
       { name: 'Salt', g: 1 },
       { name: '+ Bär-koncentrat (kallt)', g: 235, fromConcentrate: true }
     ],
-    stats: { 'Fett': '10.1%', 'Socker': '21.5%', 'PAC': '~30', 'TS': '~38%' },
     mognad: '12h + koncentrat dagen innan',
     steps: [
       '<strong>Dag 1:</strong> Macerera bär + socker + citron 30 min. Mosa lätt. Koka in tills volymen halverats (~235g, sirapig). Kyl över natt.',
       '<strong>Dag 2:</strong> Gelatin i kallt vatten 10 min. Krama ur.',
       'Vispa skummjölkspulver kallt i grädde+mjölk (annars klumpar). Värm till 70°C.',
-      'Vispa flytande äggula + socker + dextros + salt. Tempera, tillbaka, <strong>83°C</strong>.',
+      'Vispa flytande äggula + socker + glykossirap + salt. Tempera, tillbaka, <strong>83°C</strong>.',
       'Av plattan → smält gelatin i. Sila → isbad → kyl <strong>12h</strong>.',
       'Strax före churning: rör ner kallt bär-koncentrat i den kalla crème-basen. Smaka av.',
       'Vill du chunks → spara 50g koncentrat och swirl:a via lockets öppning sista 1 min.',
@@ -526,7 +662,6 @@ const RECIPES = {
       { name: 'Glukossirap', g: 12.5 },
       { name: 'Bladgelatin', g: 0.85 }
     ],
-    stats: { 'Fett': '11.0%', 'Socker tillsatt': '15.1%', 'PAC': '~32', 'Äggula': '9%' },
     mognad: '12h',
     steps: [
       '<strong>Förbered passion (dagen innan eller minst 4h innan):</strong> Tina fryst passionsfrukt. Koka upp, sila bort kärnor (frön ger grynig textur i glass). Reducera puré tills du har 250g koncentrerad smak. <strong>Kyl helt</strong> — passion får ALDRIG värmas tillsammans med mjölken (citronsyran curdlar proteinerna vid 60°C+).',
@@ -553,7 +688,6 @@ const RECIPES = {
       { name: 'Bladgelatin', g: 2.5 },
       { name: 'Rostad kokosflakes (valfritt, sista 2 min)', g: 25 }
     ],
-    stats: { 'Fett': '~19%', 'Socker tillsatt': '15.1%', 'PAC': '~17 (lågt)', 'Notering': 'Rik, ta ut 10 min innan servering' },
     mognad: '12h',
     steps: [
       '<strong>Köp rätt kokosmjölk:</strong> Aroy-D Premium, Chaokoh eller annan högkvalitativ canned med 17–22% fett. <strong>INTE light</strong> och inte sockrad kokosdryck — för mycket vatten, för lite smak.',
@@ -578,9 +712,8 @@ const RECIPES = {
       { name: 'Flytande äggula', g: 120 },
       { name: 'Glukossirap', g: 25 },
       { name: 'Bladgelatin', g: 3.4 },
-      { name: 'Mald kaffe (för infusion, filtreras bort)', g: 35 }
+      { name: 'Mald kaffe (för infusion, filtreras bort)', g: 35, excludeFromBase: true }
     ],
-    stats: { 'Fett': '18.9%', 'Socker': '18.2%', 'Äggula': '15.6%', 'MSNF': '~2.6%', 'PAC': '~20' },
     mognad: '12h',
     steps: [
       '<strong>Förbered kaffemjölk:</strong> Värm 250–280g mjölk (3%) med 35g malt kaffe (frystorkat funkar också men färskmalet är bättre). Värm till strax under kokpunkten, dra av plattan, låt dra 10–15 min. Filtrera genom kaffefilter. <strong>Mät upp 225g kaffemjölk</strong> — fyll på med mer vanlig mjölk om för lite, eller starta om med mer mjölk om mycket förlorat i kaffegrumset.',
@@ -592,7 +725,7 @@ const RECIPES = {
       'Av plattan → smält gelatin i. Sila → isbad → kyl <strong>12h</strong>.',
       'Wilfa 30–35 min. Frys 4h.'
     ],
-    note: '<strong>Sweet spot-flaggor i din recept (info, inte korrigeringar):</strong><br>• <strong>Äggula 15.6%</strong> (~157 g/L) är klassisk italiensk caffè-gelato-stil, mycket rik. Om den känns för tung — sänk till 90g (12% / 117 g/L).<br>• <strong>Gelatin 4.4 g/kg</strong> är över gelato-zon 2–3 g/kg → risk för gummikänsla efter 3+ dagar i frys. 1.5 blad (2.5g) räcker tekniskt.<br>• <strong>MSNF ~2.6%</strong> är lågt (zon 8–11%), men den höga äggulan + grädden kompenserar med proteiner och fett. Vill du gå "renare" gelato: lägg till 25g skummjölkspulver och sänk grädden till 250g.'
+    note: '<strong>Sweet spot-flaggor i din recept (info, inte korrigeringar):</strong><br>• <strong>Äggula 15.6%</strong> (~157 g/L) är klassisk italiensk caffè-stil, mycket rik. Om den känns för tung — sänk till 90g (12% / 117 g/L).<br>• <strong>Gelatin 4.4 g/kg</strong> är över target-zonen 2–3 g/kg → risk för gummikänsla efter 3+ dagar i frys. 1.5 blad (2.5g) räcker tekniskt.<br>• <strong>MSNF ~2.6%</strong> är lågt (zon 8–11%), men den höga äggulan + grädden kompenserar med proteiner och fett. Vill du gå "renare" balanserad: lägg till 25g skummjölkspulver och sänk grädden till 250g.'
   }
 };
 
@@ -673,15 +806,24 @@ function render() {
 
   // Total
   let totalG = 0;
-  r.items.forEach(it => { if (!it.unit) totalG += it.g * factor; });
+  r.items.forEach(it => { if (!it.unit && !it.excludeFromBase) totalG += it.g * factor; });
   $('amtTotal').innerHTML = Math.round(totalG) + '<span style="font-size:12px;color:var(--cream);margin-left:4px;">g</span>';
 
-  // Stats
-  let statsHtml = '';
-  Object.entries(r.stats).forEach(([k, v], i, arr) => {
-    statsHtml += k + ' <span>' + v + '</span>';
-    if (i < arr.length - 1) statsHtml += ' · ';
-  });
+  // Stats — räknas live från ingredienserna (skala-invariant: använder r.items + r.base)
+  const s = computeStats(r.items, r.base);
+  const fmt = (label, val, decimals, unit, target) => {
+    const cls = TARGETS[target] ? ' class="' + 'stat-' + TARGETS[target](val) + '"' : '';
+    return label + ' <span' + cls + '>' + val.toFixed(decimals) + unit + '</span>';
+  };
+  let statsHtml = [
+    fmt('Fett',    s.fat,     1, '%', 'fat'),
+    fmt('Socker',  s.sugar,   1, '%'),
+    fmt('MSNF',    s.msnf,    1, '%', 'msnf'),
+    fmt('TS',      s.ts,      1, '%'),
+    fmt('PAC',     s.pac,     1, '',  'pac'),
+    fmt('POD',     s.pod,     1, '',  'pod'),
+    fmt('Gelatin', s.gelatinPerKg, 1, ' g/kg', 'gelatin')
+  ].join(' · ');
   statsHtml += '<br>Mognad <span>' + r.mognad + '</span> · Tempering <span>83°C</span> · Wilfa <span>30–40 min</span>';
   $('stats').innerHTML = statsHtml;
 

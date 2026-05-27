@@ -93,15 +93,15 @@ RECIPES = {
         {'name': 'Salt', 'g': 1},
         {'name': '+ Bär-koncentrat (kallt)', 'g': 235},
     ]),
-    'passion': (539, [  # passion 250→125, +20g SMP, gelatin 0.85→1.7, sucrose 90→70 (POD-fix)
-        {'name': 'Grädde 36%', 'g': 137.5},
-        {'name': 'Mjölk 3%', 'g': 112.5},
-        {'name': 'Skummjölkspulver', 'g': 20},   # NY (var 0)
-        {'name': 'Passionsfruktspuré (reducerad, silad)', 'g': 125},  # NY (var 250)
-        {'name': 'Strösocker', 'g': 70},         # NY (var 90)
-        {'name': 'Flytande äggula', 'g': 60},
-        {'name': 'Glukossirap', 'g': 12.5},
-        {'name': 'Bladgelatin', 'g': 1.7},       # NY (var 0.85)
+    'passion': (500, [  # rebalanserad till exakt 500g bas (1 paket → 500g)
+        {'name': 'Grädde 36%', 'g': 125},
+        {'name': 'Mjölk 3%', 'g': 100},
+        {'name': 'Skummjölkspulver', 'g': 18},
+        {'name': 'Passionsfruktspuré (reducerad, silad)', 'g': 125},
+        {'name': 'Strösocker', 'g': 65},
+        {'name': 'Flytande äggula', 'g': 55},
+        {'name': 'Glukossirap', 'g': 11},
+        {'name': 'Bladgelatin', 'g': 1.7},
     ]),
     'kokos': (608, [    # +15g SMP, kokosmjölk 250→180
         {'name': 'Grädde 36%', 'g': 137.5},

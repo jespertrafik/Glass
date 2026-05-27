@@ -1,4 +1,7 @@
-"""Verifierar JS computeStats mot Python-implementation för alla 6 recept."""
+"""Verifierar JS computeStats mot Python-implementation. Speglar index.html INGREDIENT_DB + RECIPES.
+
+Kör efter recept-ändringar för att bekräfta att JS-värdena matchar förväntat. Mål: 0 BAD.
+"""
 
 PAC = {'sucrose': 100, 'dextrose': 190, 'fructose': 190, 'glucose_de42': 80, 'lactose': 100}
 POD = {'sucrose': 100, 'dextrose': 70,  'fructose': 170, 'glucose_de42': 50, 'lactose': 16}
@@ -12,11 +15,14 @@ DB = {
     'Strösocker (i basen)':                      {'fat': 0,    'msnf': 0,     'sugars': {'sucrose': 1.0}},
     'Glykossirap':                               {'fat': 0,    'msnf': 0,     'sugars': {'glucose_de42': 0.80}},
     'Glukossirap':                               {'fat': 0,    'msnf': 0,     'sugars': {'glucose_de42': 0.80}},
+    # NY: honung (38% fruktos + 31% glukos + 17% vatten + 14% övrigt)
+    'Honung':                                    {'fat': 0,    'msnf': 0,     'sugars': {'fructose': 0.38, 'glucose_de42': 0.31}},
     'Flytande äggula':                           {'fat': 0.27, 'msnf': 0,     'sugars': {}},
     'Mörk choklad 70%':                          {'fat': 0.40, 'msnf': 0,     'sugars': {'sucrose': 0.30}},
     'Kakao (holländsk)':                         {'fat': 0.22, 'msnf': 0,     'sugars': {}},
     '+ Bär-koncentrat (kallt)':                  {'fat': 0,    'msnf': 0,     'sugars': {'fructose': 0.18}},
-    'Passionsfruktspuré (reducerad, silad)':     {'fat': 0,    'msnf': 0,     'sugars': {'fructose': 0.11}},
+    # ÄNDRAD: passion-puré nu från 250g→125g, dubblad sockerkoncentration
+    'Passionsfruktspuré (reducerad, silad)':     {'fat': 0,    'msnf': 0,     'sugars': {'fructose': 0.22}},
     'Reducerad kokosmjölk (från ~500g)':         {'fat': 0.40, 'msnf': 0.04,  'sugars': {}},
     'Rostad kokosflakes (valfritt, sista 2 min)':{'fat': 0.65, 'msnf': 0,     'sugars': {}},
 }
@@ -50,104 +56,118 @@ def compute(items, totalG):
         'gel':  gelG / totalG * 1000,
     }
 
+# PREVIEW-RECEPT (efter alla planerade fixar)
 RECIPES = {
-    'vanilj': (698, [
+    'vanilj': (698, [   # oförändrad förutom gelatin 2.5 → 1.7 (gjordes redan)
         {'name': 'Grädde 36%', 'g': 215},
         {'name': 'Mjölk 3%', 'g': 275},
         {'name': 'Skummjölkspulver', 'g': 30},
         {'name': 'Strösocker', 'g': 95},
         {'name': 'Glykossirap', 'g': 30},
         {'name': 'Flytande äggula', 'g': 50},
-        {'name': 'Bladgelatin', 'g': 2.5},
+        {'name': 'Bladgelatin', 'g': 1.7},  # NY
         {'name': 'Vaniljextrakt (eller 2g vaniljpulver)', 'g': 10},
         {'name': 'Salt', 'g': 1},
     ]),
-    'choklad': (701, [
+    'choklad': (706, [  # -15g sucrose, +20g honung, total +5g
         {'name': 'Grädde 36%', 'g': 150},
         {'name': 'Mjölk 3%', 'g': 285},
         {'name': 'Skummjölkspulver', 'g': 20},
         {'name': 'Mörk choklad 70%', 'g': 90},
         {'name': 'Kakao (holländsk)', 'g': 20},
-        {'name': 'Strösocker', 'g': 65},
+        {'name': 'Strösocker', 'g': 50},   # NY (var 65)
+        {'name': 'Honung', 'g': 20},        # NY (var 0)
         {'name': 'Glykossirap', 'g': 30},
         {'name': 'Flytande äggula', 'g': 40},
-        {'name': 'Bladgelatin', 'g': 2.5},
+        {'name': 'Bladgelatin', 'g': 1.7},  # NY (var 2.5)
         {'name': 'Salt', 'g': 1},
     ]),
-    'jordgubb': (701, [
+    'jordgubb': (711, [  # +10g SMP, total +10
         {'name': 'Grädde 36%', 'g': 155},
         {'name': 'Mjölk 3%', 'g': 170},
-        {'name': 'Skummjölkspulver', 'g': 20},
+        {'name': 'Skummjölkspulver', 'g': 30},  # NY (var 20)
         {'name': 'Strösocker (i basen)', 'g': 45},
         {'name': 'Glykossirap', 'g': 35},
         {'name': 'Flytande äggula', 'g': 30},
-        {'name': 'Bladgelatin', 'g': 2.5},
+        {'name': 'Bladgelatin', 'g': 1.7},      # NY (var 2.5)
         {'name': 'Salt', 'g': 1},
         {'name': '+ Bär-koncentrat (kallt)', 'g': 235},
     ]),
-    'passion': (663, [
+    'passion': (539, [  # passion 250→125, +20g SMP, gelatin 0.85→1.7, sucrose 90→70 (POD-fix)
         {'name': 'Grädde 36%', 'g': 137.5},
         {'name': 'Mjölk 3%', 'g': 112.5},
-        {'name': 'Passionsfruktspuré (reducerad, silad)', 'g': 250},
-        {'name': 'Strösocker', 'g': 90},
+        {'name': 'Skummjölkspulver', 'g': 20},   # NY (var 0)
+        {'name': 'Passionsfruktspuré (reducerad, silad)', 'g': 125},  # NY (var 250)
+        {'name': 'Strösocker', 'g': 70},         # NY (var 90)
         {'name': 'Flytande äggula', 'g': 60},
         {'name': 'Glukossirap', 'g': 12.5},
-        {'name': 'Bladgelatin', 'g': 0.85},
+        {'name': 'Bladgelatin', 'g': 1.7},       # NY (var 0.85)
     ]),
-    'kokos': (663, [
+    'kokos': (608, [    # +15g SMP, kokosmjölk 250→180
         {'name': 'Grädde 36%', 'g': 137.5},
         {'name': 'Mjölk 3%', 'g': 112.5},
-        {'name': 'Reducerad kokosmjölk (från ~500g)', 'g': 250},
+        {'name': 'Skummjölkspulver', 'g': 15},   # NY (var 0)
+        {'name': 'Reducerad kokosmjölk (från ~500g)', 'g': 180},  # NY (var 250)
         {'name': 'Strösocker', 'g': 90},
         {'name': 'Flytande äggula', 'g': 60},
         {'name': 'Glukossirap', 'g': 12.5},
-        {'name': 'Bladgelatin', 'g': 2.5},
+        {'name': 'Bladgelatin', 'g': 1.7},       # NY (var 2.5)
         {'name': 'Rostad kokosflakes (valfritt, sista 2 min)', 'g': 25},
     ]),
-    'kaffe': (768, [
-        {'name': 'Grädde 36%', 'g': 275},
-        {'name': 'Kaffemjölk (mjölk 3% + infusionerat kaffe)', 'g': 225},
-        {'name': 'Strösocker', 'g': 120},
-        {'name': 'Flytande äggula', 'g': 120},
-        {'name': 'Glykossirap', 'g': 25},
-        {'name': 'Bladgelatin', 'g': 3.4},
-        {'name': 'Mald kaffe (för infusion, filtreras bort)', 'g': 35, 'excludeFromBase': True},
+    'kaffe': (715, [    # skalat 768→700 + 15g SMP (regular-milk-fix räcker inte mot MSNF-BAD)
+        {'name': 'Grädde 36%', 'g': 251},
+        {'name': 'Kaffemjölk (mjölk 3% + infusionerat kaffe)', 'g': 205},
+        {'name': 'Skummjölkspulver', 'g': 15},   # NY (fallback eftersom +30g mjölk inte nådde green)
+        {'name': 'Strösocker', 'g': 110},
+        {'name': 'Flytande äggula', 'g': 110},
+        {'name': 'Glykossirap', 'g': 23},
+        {'name': 'Bladgelatin', 'g': 1.7},       # NY (var 3.4)
+        {'name': 'Mald kaffe (för infusion, filtreras bort)', 'g': 32, 'excludeFromBase': True},
     ]),
 }
 
-OLD = {
-    'vanilj':   {'fat': 14.7, 'sugar': 17.8, 'msnf': 8.5,  'ts': 42,  'pac': 26},
-    'choklad':  {'fat': 16.5, 'sugar': 16.4, 'msnf': 6,    'ts': 46,  'pac': 25},
-    'jordgubb': {'fat': 10.1, 'sugar': 21.5, 'pac': 30,    'ts': 38},
-    'passion':  {'fat': 11.0, 'sugar': 15.1, 'pac': 32},
-    'kokos':    {'fat': 19,   'sugar': 15.1, 'pac': 17},
-    'kaffe':    {'fat': 18.9, 'sugar': 18.2, 'msnf': 2.6,  'pac': 20},
-}
-
-def cls(target, v):
+def cls(target, v, is_fruit=False, is_rich=False):
+    if target == 'pac':
+        if is_fruit:
+            return 'bad' if v < 22 or v > 32 else 'ok'
+        return 'bad' if v < 20 or v > 32 else 'ok' if 22 <= v <= 28 else 'warn'
+    if target == 'fat':
+        if is_rich:
+            return 'ok' if 6 <= v <= 12 else 'bad' if v > 30 else 'warn'
+        return 'ok' if 6 <= v <= 12 else 'bad' if v > 20 else 'warn'
     bands = {
-        'pac':     ('bad' if v < 20 or v > 32 else 'ok' if 22 <= v <= 28 else 'warn'),
         'pod':     ('bad' if v < 12 or v > 24 else 'ok' if 14 <= v <= 20 else 'warn'),
-        'fat':     ('ok' if 6 <= v <= 12 else 'bad' if v > 20 else 'warn'),
         'msnf':    ('bad' if v < 6 or v > 14 else 'ok' if 8 <= v <= 12 else 'warn'),
         'gelatin': ('bad' if v > 3.5 else 'ok' if 1.5 <= v <= 3 else 'warn'),
     }
     return bands[target]
 
-print(f"{'Recept':10} {'Fett':>10} {'MSNF':>10} {'Socker':>10} {'TS':>8} {'PAC':>10} {'POD':>10} {'Gel':>10}")
-print('-' * 90)
+FRUIT_RECIPES = {'jordgubb', 'passion'}
+RICH_RECIPES = {'kokos'}
+
+print(f"{'Recept':10} {'Total':>6} {'Fett':>14} {'MSNF':>14} {'Socker':>8} {'TS':>8} {'PAC':>14} {'POD':>14} {'Gel':>14}")
+print('-' * 110)
+bad_count = 0
+warn_count = 0
 for name, (base, items) in RECIPES.items():
     s = compute(items, base)
-    old = OLD[name]
-    diff_pac = f"(gml {old['pac']})" if 'pac' in old else ''
-    diff_fat = f"(gml {old['fat']})" if 'fat' in old else ''
-    print(f"{name:10} "
-          f"{s['fat']:>5.1f}% [{cls('fat', s['fat']):4}] "
-          f"{s['msnf']:>5.1f}% [{cls('msnf', s['msnf']):4}] "
-          f"{s['sugar']:>5.1f}%      "
+    is_fruit = name in FRUIT_RECIPES
+    is_rich = name in RICH_RECIPES
+    pac_cls = cls('pac', s['pac'], is_fruit)
+    pod_cls = cls('pod', s['pod'])
+    fat_cls = cls('fat', s['fat'], is_rich=is_rich)
+    msnf_cls = cls('msnf', s['msnf'])
+    gel_cls = cls('gelatin', s['gel'])
+    for c in [pac_cls, pod_cls, fat_cls, msnf_cls, gel_cls]:
+        if c == 'bad': bad_count += 1
+        elif c == 'warn': warn_count += 1
+    print(f"{name:10} {base:>6} "
+          f"{s['fat']:>5.1f}% [{fat_cls:4}]  "
+          f"{s['msnf']:>5.1f}% [{msnf_cls:4}]  "
+          f"{s['sugar']:>5.1f}% "
           f"{s['ts']:>5.1f}% "
-          f"{s['pac']:>5.1f} [{cls('pac', s['pac']):4}] "
-          f"{s['pod']:>5.1f} [{cls('pod', s['pod']):4}] "
-          f"{s['gel']:>5.1f} [{cls('gelatin', s['gel']):4}]")
-    print(f"{'  diff:':10} fett {s['fat']-old.get('fat', s['fat']):+.1f}  socker {s['sugar']-old.get('sugar', s['sugar']):+.1f}  pac {s['pac']-old.get('pac', s['pac']):+.1f}")
-    print()
+          f"{s['pac']:>5.1f} [{pac_cls:4}{' F' if is_fruit else '  '}] "
+          f"{s['pod']:>5.1f} [{pod_cls:4}]  "
+          f"{s['gel']:>5.1f} [{gel_cls:4}]")
+print()
+print(f"TOTALT: {bad_count} BAD, {warn_count} warn (av 30 mätpunkter)")

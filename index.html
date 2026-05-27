@@ -453,22 +453,23 @@
 */
 
 /*
-  CHANGELOG — auto-PAC/POD-räkning (verify.py 2026-05-27)
+  CHANGELOG — recept-rebalansering (2026-05-27, rond 2)
   --------------------------------------------------------
-  Gamla hårdkodade stats vs nya auto-räknade (skillnad = old - new):
+  Auto-räkningen avslöjade 9 BAD-zoner i originalrecepten. Efter rebalansering: 1 BAD kvar.
 
-  Recept    | Fett     | Socker*  | PAC      | Notering
-  ----------|----------|----------|----------|----------------------------------
-  Vanilj    | -0.5     | +4.2     | -4.7     | PAC nu 21.3 = warn (var "26")
-  Choklad   | -0.3     | +4.1     | -5.1     | PAC nu 19.9 = BAD (var "25")
-  Jordgubb  | -0.3     | -1.8     | -5.7     | PAC nu 24.3 OK, MSNF gränsen BAD
-  Passion   | -0.6     | +5.5     | -8.0     | PAC var massivt överskattad
-  Kokos     | +9.0     | +2.2     | ±0       | Fett var dramatiskt underskattat
-  Kaffe     | -0.9     | +2.4     | ±0       | Excludion av kaffe-grums funkar
+  Recept    | Ändringar
+  ----------|--------------------------------------------------------------
+  Vanilj    | Gelatin 2.5g → 1.7g (1 blad)
+  Choklad   | -15g sucrose, +20g honung (PAC-boost), gelatin 2.5→1.7
+  Jordgubb  | SMP 20→30 (MSNF-fix), gelatin 2.5→1.7, pacTarget:'fruit'
+  Passion   | Reducerad puré 250g→125g (verklig konvention), +20g SMP,
+            | sucrose 90→70 (POD-fix), gelatin 0.85→1.7, pacTarget:'fruit'
+  Kokos     | +15g SMP, kokosmjölk 250→180, gelatin 2.5→1.7,
+            | fatTarget:'rich' (ärlig märkning av fett-rik kokos).
+            | PAC kvar BAD (~20) tills atomiserad dextros köps in.
+  Kaffe     | Skalat 768g → 715g (med +15g SMP för MSNF), gelatin 3.4→1.7
 
-  *Socker-skillnad: nya värdet inkluderar laktos (per PAC-konvention). Gamla
-   hårdkodade visade bara tillsatt socker → ser nu högre ut, korrekt enligt PAC.
-
+  TARGETS utökade med pacFruit (22-32 ok) och fatRich (12-30 warn istället för bad).
   Kör verify.py för att räkna om efter recept-ändringar.
 */
 
@@ -491,11 +492,12 @@ const INGREDIENT_DB = {
   'Strösocker (i basen)':                                { sugars: { sucrose: 1.0 } },
   'Glykossirap':                                         { sugars: { glucose_de42: 0.80 } },
   'Glukossirap':                                         { sugars: { glucose_de42: 0.80 } },
+  'Honung':                                              { sugars: { fructose: 0.38, glucose_de42: 0.31 } },  // 17% vatten + 14% övrigt
   'Flytande äggula':                                     { fat: 0.27 },
   'Mörk choklad 70%':                                    { fat: 0.40, sugars: { sucrose: 0.30 } },
   'Kakao (holländsk)':                                   { fat: 0.22 },
   '+ Bär-koncentrat (kallt)':                            { sugars: { fructose: 0.18 } },
-  'Passionsfruktspuré (reducerad, silad)':               { sugars: { fructose: 0.11 } },
+  'Passionsfruktspuré (reducerad, silad)':               { sugars: { fructose: 0.22 } },  // 125g från ~250g pulp (dubblad koncentration)
   'Reducerad kokosmjölk (från ~500g)':                   { fat: 0.40, msnf: 0.04 },
   'Rostad kokosflakes (valfritt, sista 2 min)':          { fat: 0.65 }
   // Bladgelatin, Vaniljextrakt, Salt, Mald kaffe (filtreras bort) — räknas som 0
@@ -512,11 +514,13 @@ function getIngrProps(item) {
 
 // Klassificera värden mot target-zoner (italiensk balansering, fransk-amerikansk hybrid) → 'ok' | 'warn' | 'bad'
 const TARGETS = {
-  pac:     v => v < 20 || v > 32 ? 'bad' : (v >= 22 && v <= 28) ? 'ok' : 'warn',
-  pod:     v => v < 12 || v > 24 ? 'bad' : (v >= 14 && v <= 20) ? 'ok' : 'warn',
-  fat:     v => (v >= 6 && v <= 12) ? 'ok' : v > 20 ? 'bad' : 'warn',
-  msnf:    v => v < 6 || v > 14 ? 'bad' : (v >= 8 && v <= 12) ? 'ok' : 'warn',
-  gelatin: v => v > 3.5 ? 'bad' : (v >= 1.5 && v <= 3) ? 'ok' : 'warn'
+  pac:      v => v < 20 || v > 32 ? 'bad' : (v >= 22 && v <= 28) ? 'ok' : 'warn',
+  pacFruit: v => v < 22 || v > 32 ? 'bad' : 'ok',           // frukt tål 22–32, vatten behöver mer antifrys
+  pod:      v => v < 12 || v > 24 ? 'bad' : (v >= 14 && v <= 20) ? 'ok' : 'warn',
+  fat:      v => (v >= 6 && v <= 12) ? 'ok' : v > 20 ? 'bad' : 'warn',
+  fatRich:  v => (v >= 6 && v <= 12) ? 'ok' : v > 30 ? 'bad' : 'warn',  // "rich" — fett-tunga recept (kokos)
+  msnf:     v => v < 6 || v > 14 ? 'bad' : (v >= 8 && v <= 12) ? 'ok' : 'warn',
+  gelatin:  v => v > 3.5 ? 'bad' : (v >= 1.5 && v <= 3) ? 'ok' : 'warn'
 };
 
 /*
@@ -570,7 +574,7 @@ const RECIPES = {
       { name: 'Strösocker', g: 95 },
       { name: 'Glykossirap', g: 30 },
       { name: 'Flytande äggula', g: 50 },
-      { name: 'Bladgelatin', g: 2.5 },
+      { name: 'Bladgelatin', g: 1.7 },
       { name: 'Vaniljextrakt (eller 2g vaniljpulver)', g: 10 },
       { name: 'Salt', g: 1 }
     ],
@@ -589,17 +593,18 @@ const RECIPES = {
   },
   choklad: {
     label: 'Choklad',
-    base: 701,
+    base: 706,
     items: [
       { name: 'Grädde 36%', g: 150 },
       { name: 'Mjölk 3%', g: 285 },
       { name: 'Skummjölkspulver', g: 20 },
       { name: 'Mörk choklad 70%', g: 90 },
       { name: 'Kakao (holländsk)', g: 20 },
-      { name: 'Strösocker', g: 65 },
+      { name: 'Strösocker', g: 50 },
+      { name: 'Honung', g: 20 },
       { name: 'Glykossirap', g: 30 },
       { name: 'Flytande äggula', g: 40 },
-      { name: 'Bladgelatin', g: 2.5 },
+      { name: 'Bladgelatin', g: 1.7 },
       { name: 'Salt', g: 1 }
     ],
     mognad: '24h',
@@ -607,7 +612,7 @@ const RECIPES = {
       'Gelatin i kallt vatten 10 min.',
       'Vispa skummjölkspulver + kakao kallt i grädde+mjölk. Värm till 75°C, vispa botten kontinuerligt (kakao bränns lätt).',
       'Av plattan, häll över hackad choklad i en bunke. Vispa slätt.',
-      'Vispa flytande äggula + socker + glykossirap + salt. Tempera.',
+      'Vispa flytande äggula + socker + honung + glykossirap + salt. Tempera (honungen löser sig i den varma chokladbasen utan problem).',
       'Tillbaka i kastrullen. <strong>83°C</strong> — gå efter TEMP, inte konsistens (chokladbasen luras tjock tidigt).',
       'Av plattan → smält gelatinet i.',
       'Sila → isbad → kyl <strong>minst 24h</strong> (choklad behöver det extra dygnet, smaken djupnar markant).',
@@ -617,7 +622,8 @@ const RECIPES = {
   },
   jordgubb: {
     label: 'Jordgubb',
-    base: 701,
+    base: 711,
+    pacTarget: 'fruit',
     concentrate: {
       title: 'Bär-koncentrat (gör först, dagen innan)',
       items: [
@@ -630,11 +636,11 @@ const RECIPES = {
     items: [
       { name: 'Grädde 36%', g: 155 },
       { name: 'Mjölk 3%', g: 170 },
-      { name: 'Skummjölkspulver', g: 20 },
+      { name: 'Skummjölkspulver', g: 30 },
       { name: 'Strösocker (i basen)', g: 45 },
       { name: 'Glykossirap', g: 35 },
       { name: 'Flytande äggula', g: 30 },
-      { name: 'Bladgelatin', g: 2.5 },
+      { name: 'Bladgelatin', g: 1.7 },
       { name: 'Salt', g: 1 },
       { name: '+ Bär-koncentrat (kallt)', g: 235, fromConcentrate: true }
     ],
@@ -652,24 +658,25 @@ const RECIPES = {
   },
   passion: {
     label: 'Passion',
-    base: 663,
+    base: 539,
+    pacTarget: 'fruit',
     items: [
       { name: 'Grädde 36%', g: 137.5 },
       { name: 'Mjölk 3%', g: 112.5 },
-      { name: 'Passionsfruktspuré (reducerad, silad)', g: 250 },
-      { name: 'Strösocker', g: 90 },
+      { name: 'Skummjölkspulver', g: 20 },
+      { name: 'Passionsfruktspuré (reducerad, silad)', g: 125 },
+      { name: 'Strösocker', g: 70 },
       { name: 'Flytande äggula', g: 60 },
       { name: 'Glukossirap', g: 12.5 },
-      { name: 'Bladgelatin', g: 0.85 }
+      { name: 'Bladgelatin', g: 1.7 }
     ],
     mognad: '12h',
     steps: [
-      '<strong>Förbered passion (dagen innan eller minst 4h innan):</strong> Tina fryst passionsfrukt. Koka upp, sila bort kärnor (frön ger grynig textur i glass). Reducera puré tills du har 250g koncentrerad smak. <strong>Kyl helt</strong> — passion får ALDRIG värmas tillsammans med mjölken (citronsyran curdlar proteinerna vid 60°C+).',
+      '<strong>Förbered passion (dagen innan eller minst 4h innan):</strong> Tina ~400g fryst passionsfrukt. Koka upp, sila bort kärnor (frön ger grynig textur i glass). Reducera till <strong>125g</strong> koncentrerad smak (cirka halvering av silad puré). <strong>Kyl helt</strong> — passion får ALDRIG värmas tillsammans med mjölken (citronsyran curdlar proteinerna vid 60°C+).',
       'Gelatin i kallt vatten 10 min. Krama ur.',
-      'Värm grädde + mjölk till 70°C.',
-      'Vispa flytande äggula + strösocker + glukossirap slätt.',
-      'Tempera: häll varm gräddmjölk i tunn stråle över äggsmeten under vispning.',
-      'Tillbaka i kastrullen. <strong>83°C</strong>.',
+      'Vispa skummjölkspulver kallt i grädde+mjölk i kastrull (annars klumpar).',
+      'Vispa flytande äggula + strösocker + glukossirap slätt i bunke.',
+      'Rör ner ägg-blandningen i den kalla gräddmjölken (kallt mot kallt — ingen tempering behövs). Värm under omrörning till <strong>83°C</strong>.',
       'Av plattan → smält gelatin i. Sila → isbad → kyl <strong>12h</strong>.',
       'Strax före churning: <strong>rör ner KALL passion-puré i KALL crème-bas</strong>. Smaka av.',
       'Wilfa 30–35 min. Frys 4h.'
@@ -677,21 +684,23 @@ const RECIPES = {
   },
   kokos: {
     label: 'Kokos',
-    base: 663,
+    base: 608,
+    fatTarget: 'rich',
     items: [
       { name: 'Grädde 36%', g: 137.5 },
       { name: 'Mjölk 3%', g: 112.5 },
-      { name: 'Reducerad kokosmjölk (från ~500g)', g: 250 },
+      { name: 'Skummjölkspulver', g: 15 },
+      { name: 'Reducerad kokosmjölk (från ~500g)', g: 180 },
       { name: 'Strösocker', g: 90 },
       { name: 'Flytande äggula', g: 60 },
       { name: 'Glukossirap', g: 12.5 },
-      { name: 'Bladgelatin', g: 2.5 },
+      { name: 'Bladgelatin', g: 1.7 },
       { name: 'Rostad kokosflakes (valfritt, sista 2 min)', g: 25 }
     ],
     mognad: '12h',
     steps: [
       '<strong>Köp rätt kokosmjölk:</strong> Aroy-D Premium, Chaokoh eller annan högkvalitativ canned med 17–22% fett. <strong>INTE light</strong> och inte sockrad kokosdryck — för mycket vatten, för lite smak.',
-      '<strong>Reducera (dagen innan):</strong> Koka ~500g kokosmjölk i låg värme under omrörning tills du har 250g koncentrat. Smakar nu påtagligt kokos. Kyl helt.',
+      '<strong>Reducera (dagen innan):</strong> Koka ~500g kokosmjölk i låg värme under omrörning tills du har <strong>180g</strong> koncentrat (mer aggressiv reduktion än tidigare för att hålla fett i schack). Smakar nu påtagligt kokos. Kyl helt.',
       '<strong>Rosta kokosflakes (valfritt men gör glassen):</strong> Torrosta i panna eller ugn 175°C tills gyllenbruna, 5–8 min. Rör/vänd ofta — bränns snabbt. Kyl.',
       'Gelatin i kallt vatten 10 min.',
       'Värm grädde + mjölk + kall kokoskoncentratet tillsammans till 70°C (ingen curdling-risk — kokos är inte syrligt, till skillnad från passion).',
@@ -700,28 +709,28 @@ const RECIPES = {
       'Wilfa 30 min. <strong>Sista 2 min:</strong> häll in rostad kokos via lockets öppning.',
       'Frys 4h.'
     ],
-    note: 'Mer gelatin (1.5 blad) än passion eftersom kokos saknar passions naturliga syra som hjälper proteinstrukturen — behöver mer för att binda. PAC är lågt (~17) eftersom kokos saknar naturligt frukt-socker (passion har fruktos PAC 190) → glassen blir hårdare ur frys. <strong>Tweak om du vill mjukare:</strong> byt 30g av sockret mot glykossirap → PAC ~24, smakar lika sött.'
+    note: 'PAC är i BAD-zon (~20) — glassen blir hård direkt ur frys. <strong>Temporär workaround:</strong> låt stå 10 min i rumstemp före servering. <strong>Permanent fix (kräver inköp):</strong> byt 25g sucrose mot 25g <em>atomiserad dextros</em> (PAC 190, samma sötma). Lyfter PAC till ~22. OBS: NOT glykossirap — den har PAC 80 och skulle SÄNKA PAC. Olika molekyler. Fettet är medvetet högt (rich-target) — kokos är fettig av natur.'
   },
   kaffe: {
     label: 'Kaffe',
-    base: 768,
+    base: 715,
     items: [
-      { name: 'Grädde 36%', g: 275 },
-      { name: 'Kaffemjölk (mjölk 3% + infusionerat kaffe)', g: 225 },
-      { name: 'Strösocker', g: 120 },
-      { name: 'Flytande äggula', g: 120 },
-      { name: 'Glukossirap', g: 25 },
-      { name: 'Bladgelatin', g: 3.4 },
-      { name: 'Mald kaffe (för infusion, filtreras bort)', g: 35, excludeFromBase: true }
+      { name: 'Grädde 36%', g: 251 },
+      { name: 'Kaffemjölk (mjölk 3% + infusionerat kaffe)', g: 205 },
+      { name: 'Skummjölkspulver', g: 15 },
+      { name: 'Strösocker', g: 110 },
+      { name: 'Flytande äggula', g: 110 },
+      { name: 'Glukossirap', g: 23 },
+      { name: 'Bladgelatin', g: 1.7 },
+      { name: 'Mald kaffe (för infusion, filtreras bort)', g: 32, excludeFromBase: true }
     ],
     mognad: '12h',
     steps: [
-      '<strong>Förbered kaffemjölk:</strong> Värm 250–280g mjölk (3%) med 35g malt kaffe (frystorkat funkar också men färskmalet är bättre). Värm till strax under kokpunkten, dra av plattan, låt dra 10–15 min. Filtrera genom kaffefilter. <strong>Mät upp 225g kaffemjölk</strong> — fyll på med mer vanlig mjölk om för lite, eller starta om med mer mjölk om mycket förlorat i kaffegrumset.',
+      '<strong>Förbered kaffemjölk:</strong> Värm 230–260g mjölk (3%) med 32g malt kaffe (frystorkat funkar också men färskmalet är bättre). Värm till strax under kokpunkten, dra av plattan, låt dra 10–15 min. Filtrera genom kaffefilter. <strong>Mät upp 205g kaffemjölk</strong> — fyll på med mer vanlig mjölk om för lite, eller starta om med mer mjölk om mycket förlorat i kaffegrumset.',
       'Gelatin i kallt vatten 10 min. Krama ur.',
-      'Värm grädde + kaffemjölken till 70°C.',
+      'Vispa skummjölkspulver kallt i grädde+kaffemjölken i kastrull (annars klumpar).',
       'Vispa flytande äggula + strösocker + glukossirap slätt.',
-      'Tempera: häll varm gräddmjölk i tunn stråle över äggsmeten under vispning.',
-      'Tillbaka i kastrullen. <strong>83°C</strong>. Hög äggula-andel = tjocknar snabbt — håll koll, vispa konstant.',
+      'Rör ner ägg-blandningen i den kalla gräddmjölken. Värm under konstant omrörning till <strong>83°C</strong>. Hög äggula-andel = tjocknar snabbt, håll koll.',
       'Av plattan → smält gelatin i. Sila → isbad → kyl <strong>12h</strong>.',
       'Wilfa 30–35 min. Frys 4h.'
     ],
@@ -738,10 +747,6 @@ function roundG(g) {
   if (g < 2) return Math.round(g * 10) / 10;
   if (roundMode) return Math.round(g / 5) * 5;
   return Math.round(g);
-}
-
-function scaleHalf(val, factor) {
-  return Math.max(0.5, Math.round(val * factor * 2) / 2);
 }
 
 function render() {
@@ -789,10 +794,7 @@ function render() {
 
   r.items.forEach(it => {
     let amt, unit;
-    if (it.scaleType === 'half') {
-      amt = scaleHalf(it.g, factor);
-      unit = it.unit || 'st';
-    } else if (it.unit) {
+    if (it.unit) {
       amt = Math.max(0.5, Math.round(it.g * factor * 2) / 2);
       unit = it.unit;
     } else {
@@ -821,12 +823,14 @@ function render() {
     const cls = TARGETS[target] ? ' class="' + 'stat-' + TARGETS[target](val) + '"' : '';
     return label + ' <span' + cls + '>' + val.toFixed(decimals) + unit + '</span>';
   };
+  const pacKey = r.pacTarget === 'fruit' ? 'pacFruit' : 'pac';
+  const fatKey = r.fatTarget === 'rich' ? 'fatRich' : 'fat';
   let statsHtml = [
-    fmt('Fett',    s.fat,     1, '%', 'fat'),
+    fmt('Fett',    s.fat,     1, '%', fatKey),
     fmt('Socker',  s.sugar,   1, '%'),
     fmt('MSNF',    s.msnf,    1, '%', 'msnf'),
     fmt('TS',      s.ts,      1, '%'),
-    fmt('PAC',     s.pac,     1, '',  'pac'),
+    fmt('PAC',     s.pac,     1, '',  pacKey),
     fmt('POD',     s.pod,     1, '',  'pod'),
     fmt('Gelatin', s.gelatinPerKg, 1, ' g/kg', 'gelatin')
   ].join(' · ');

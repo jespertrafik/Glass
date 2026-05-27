@@ -1,60 +1,61 @@
 # Glasskalkylator
 
-Premium custard-baserad glasskalkylator med italiensk PAC/POD-balansering, optimerad för Wilfa ICM-C15. Sex smaker som flikar, alla skalbara mot vald total-vikt, alla siffror räknas live från ingredienserna.
+Premium custard-baserad glasskalkylator med italiensk PAC/POD-balansering, optimerad för Wilfa ICM-C15. Sex smaker som flikar — alla nyckeltal räknas live från ingredienserna och färgkodas mot target-zoner.
 
-Live: https://glass.jespertrafik.com (efter GitHub Pages-setup)
+Live: https://glass.jespertrafik.com
 
 ## Vad det här är (och inte är)
 
-Det här är **inte gelato** (fett 4–9%). Det är **premium custard-glass** i fransk stil (fett 14–25%) som använder **italienska balanseringsverktyg** (PAC, POD, MSNF, dextros) för att räkna ut sockerprofil och frystextur. Slutprodukten ligger närmare amerikansk premium ice cream än italiensk gelato — det är medvetet val.
+Det här är **inte gelato** (fett 4–9%). Det är **premium custard-glass** i fransk stil (fett 12–20%) som använder **italienska balanseringsverktyg** (PAC, POD, MSNF, dextros) för att räkna ut sockerprofil och frystextur. Slutprodukten ligger närmare amerikansk premium ice cream än italiensk gelato — det är medvetet val.
 
-## Flikar
+## Flikar (alla recept gelato-mässigt balanserade)
 
-- **Vanilj** — klassisk crème anglaise med MSNF, glykossirap, gelatin. Vaniljextrakt eller -pulver.
-- **Choklad** — dubbel chokladkälla (70% choklad + holländsk kakao), 24h mognad.
-- **Jordgubb** — bär-koncentrat-teknik (390g bär → 235g koncentrat) för smak utan iskristaller.
-- **Passion** — reducerad puré silad från kärnor, kall inblandning efter mognad (citronsyran curdlar mjölk vid värme).
-- **Kokos** — Aroy-D reducerad 500g→250g, valfri rostad kokosflakes via locket sista 2 min.
-- **Kaffe** — kaffeinfusion i mjölken som filtreras, klassisk italiensk caffè-stil med hög äggula.
+| Smak | Bas | Notering |
+|---|---|---|
+| **Vanilj** | 698 g | Klassisk crème anglaise, vaniljextrakt eller -pulver |
+| **Choklad** | 706 g | Dubbel chokladkälla (70% choklad + holländsk kakao), 24h mognad. Honung som PAC-booster tills dextros köps in |
+| **Jordgubb** | 711 g | Bär-koncentrat-teknik (390→235g), fruit-PAC-target |
+| **Passion** | 539 g | Reducerad puré 125g (från ~400g fryst), kall inblandning efter mognad, fruit-PAC-target |
+| **Kokos** | 608 g | Aroy-D reducerad 500→180g, valfri rostad kokos, rich-fat-target. PAC kvar BAD tills dextros köps |
+| **Kaffe** | 715 g | Mjölk-kaffe-infusion (filtreras), hög äggula 15% italiensk caffè-stil |
 
 ## Logik
 
-- Default 700g bas → Wilfa C15 säker zon (~47% fyllnad efter +20–30% overrun)
-- Wilfa-zon-check: varnar under 400g, över 850g (spill/stall-risk), flaggar sweet spot 600–750g
-- Volym-skalning: ange total bas-vikt → alla ingredienser skalas proportionellt
-- **Auto-räknade stats live från ingredienserna** (Fett %, Socker %, MSNF %, TS %, PAC, POD, Gelatin g/kg) — färgkodade mot target-zoner (grön=ok, gul=varning, röd=utanför)
-- PAC/POD-konvention: modern (Underbelly/Goff) som inkluderar laktos
-- Tekniska skillnader inbakade i stegen per smak: 83°C (flytande äggula), kakao värms separat, passion KALL i KALL, kokos kan värmas (ingen syra), kaffe-infusion + filtrering
+- **Auto-räknade stats live från ingredienserna:** Fett %, Socker %, MSNF %, TS %, PAC, POD, Gelatin g/kg
+- **Färgkodning** mot target-zoner: grön (ok) / gul (warn) / röd (bad)
+- **Volym-skalning:** ange total bas-vikt → alla ingredienser skalas proportionellt
+- **Wilfa-zon-check:** varnar under 400g, över 850g (spill/stall-risk), flaggar sweet spot 600–750g
+- **Bladgelatin** visas både som antal blad (primärt) och gram (referens) — 1 blad = 1.7g
+- **Excludion av filtrerade ingredienser** (t.ex. kaffegrums som filtreras bort räknas inte i basvikten)
+- **PAC/POD-konvention:** modern (Underbelly/Goff) som inkluderar laktos
 
 ## Target-zoner
 
-| Mått | Target | Källa |
-|---|---|---|
-| PAC | 22–28 (frukt 28–32) | Italiensk balanseringsregel — gäller även custard-glass |
-| POD | 18–22 (under 16 = "platt", över 24 = för sött) | — |
-| MSNF | 8–12% | Italiensk balanseringsregel |
-| Fett | 12–18% | Fransk-amerikansk premium ice cream-stil |
-| Gelatin | 1.5–3 g/kg | Över 3.5 = gummikänsla |
+| Mått | Standard | Frukt-variant | Rich-variant |
+|---|---|---|---|
+| PAC | 22–28 ok, 28–32 warn | 22–32 ok | — |
+| POD | 14–20 ok, 20–24 warn | — | — |
+| Fett | 6–12 ok, 12–18 warn, >20 BAD | — | 6–12 ok, 12–30 warn, >30 BAD |
+| MSNF | 8–12 ok, 6–8 warn | — | — |
+| Gelatin | 1.5–3 g/kg ok, >3.5 BAD | — | — |
+
+Frukt-variant (jordgubb, passion): högre PAC OK eftersom fruktvattnet behöver mer antifrys.
+Rich-variant (kokos): honest labeling — fett-rik glass är medvetet val, inte BAD.
 
 ## Tekniska val
 
 - **Flytande äggula** (pastöriserad) — säker vid 83°C
-- **Sucrose + glykossirap (42 DE)** — PAC-balansering för mjuk skopbar konsistens vid -18°C
+- **Sucrose + glykossirap (42 DE)** — PAC-balansering. Atomiserad dextros (PAC 190) köps separat för fixar
+- **Honung** — temporär PAC-booster i choklad tills dextros köps in (PAC ~130 effektivt)
 - **Skummjölkspulver** — MSNF-höjning till 8–11%
-- **Bladgelatin** — 1.7g/blad (svenskt), 2–3 g/kg target (frukt med naturlig syra/pektin tål mindre)
+- **Bladgelatin** — 1 blad (1.7g) per 700g batch (~2.4 g/kg)
 - **Mognad** 12h standard, 24h på choklad
 
 ## Filer
 
 - `index.html` — kalkylatorn, självförsörjande
-- `verify.py` — Python-implementation av computeStats för att verifiera räkningar efter recept-ändringar (`py verify.py`)
+- `verify.py` — Python-implementation av computeStats för verifiering efter recept-ändringar (`py verify.py`)
 - `CNAME` — domän för GitHub Pages
 
 ## Stack
 Statisk HTML, hostas på GitHub Pages, DNS via Cloudflare.
-
-## Att göra
-- [ ] Skapa GitHub-repo `jespertrafik/glass`
-- [ ] Push initial commit
-- [ ] Aktivera GitHub Pages (main branch, root)
-- [ ] CNAME i Cloudflare: `glass` → `jespertrafik.github.io`

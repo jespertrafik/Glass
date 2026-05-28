@@ -454,24 +454,23 @@
 */
 
 /*
-  CHANGELOG — recept-rebalansering (2026-05-27, rond 2)
+  CHANGELOG — sockersystem: socker + dextros (2026-05-28, rond 3)
   --------------------------------------------------------
-  Auto-räkningen avslöjade 9 BAD-zoner i originalrecepten. Efter rebalansering: 1 BAD kvar.
+  Beslut: skippa glukossirap helt. Bara strösocker + atomiserad dextros.
+  Enklare inköp (socker hemma + 1 påse dextros) och dextros höjer PAC utan
+  extra sötma. Alla glukossirap/honung utbytta och rebalanserade till grönt.
 
-  Recept    | Ändringar
+  Recept    | Sockerändring (övrigt oförändrat)
   ----------|--------------------------------------------------------------
-  Vanilj    | Gelatin 2.5g → 1.7g (1 blad)
-  Choklad   | -15g sucrose, +20g honung (PAC-boost), gelatin 2.5→1.7
-  Jordgubb  | SMP 20→30 (MSNF-fix), gelatin 2.5→1.7, pacTarget:'fruit'
-  Passion   | Reducerad puré 250g→125g (verklig konvention), +20g SMP,
-            | sucrose 90→70 (POD-fix), gelatin 0.85→1.7, pacTarget:'fruit'
-  Kokos     | +15g SMP, kokosmjölk 250→180, gelatin 2.5→1.7,
-            | fatTarget:'rich' (ärlig märkning av fett-rik kokos).
-            | PAC kvar BAD (~20) tills atomiserad dextros köps in.
-  Kaffe     | Skalat 768g → 715g (med +15g SMP för MSNF), gelatin 3.4→1.7
+  Vanilj    | socker 95→80, glukossirap 30 → dextros 22.  PAC 22.4 POD 14.5 ok
+  Choklad   | bort honung 20 + glukossirap 30; socker 50→52, dextros 30. PAC 23.2 POD 14.8 ok
+  Jordgubb  | glukossirap 35 → dextros 22 (socker 45 kvar). PAC 27.4 POD 19.2 ok (fruit)
+  Passion   | socker 70→48, glukossirap 12.5 → dextros 14. PAC 27.1 POD 20.0 ok (fruit)
+  Kokos     | socker 90→70, glukossirap 12.5 → dextros 38. PAC 19→26.8 (UR BAD), POD 16.4 ok
+  Kaffe     | socker 110→95, glukossirap 23 → dextros 23. PAC 22.8 POD 16.1 ok
 
-  TARGETS utökade med pacFruit (22-32 ok) och fatRich (12-30 warn istället för bad).
-  Kör verify.py för att räkna om efter recept-ändringar.
+  Alla sex recept nu gröna på PAC + POD. Verifierat via rebalance.py
+  (speglar computeStats). TARGETS/baser oförändrade.
 */
 
 // PAC/POD-faktorer per sockertyp (modern konvention med laktos)
@@ -491,8 +490,9 @@ const INGREDIENT_DB = {
   'Skummjölkspulver':                                    { fat: 0,    msnf: 0.96,  sugars: { lactose: 0.52  } },
   'Strösocker':                                          { sugars: { sucrose: 1.0 } },
   'Strösocker (i basen)':                                { sugars: { sucrose: 1.0 } },
-  'Glykossirap':                                         { sugars: { glucose_de42: 0.80 } },
-  'Glukossirap':                                         { sugars: { glucose_de42: 0.80 } },
+  'Atomiserad dextros':                                  { sugars: { dextrose: 1.0 } },        // PAC 190, POD 70 — höjer antifrys utan extra sötma
+  'Glykossirap':                                         { sugars: { glucose_de42: 0.80 } },   // kvar i DB för bakåtkompabilitet, ingen preset använder den
+  'Glukossirap':                                         { sugars: { glucose_de42: 0.80 } },   // kvar i DB för bakåtkompabilitet, ingen preset använder den
   'Honung':                                              { sugars: { fructose: 0.38, glucose_de42: 0.31 } },  // 17% vatten + 14% övrigt
   'Flytande äggula':                                     { fat: 0.27 },
   'Mörk choklad 70%':                                    { fat: 0.40, sugars: { sucrose: 0.30 } },
@@ -572,8 +572,8 @@ const RECIPES = {
       { name: 'Grädde 36%', g: 215 },
       { name: 'Mjölk 3%', g: 275 },
       { name: 'Skummjölkspulver', g: 30 },
-      { name: 'Strösocker', g: 95 },
-      { name: 'Glykossirap', g: 30 },
+      { name: 'Strösocker', g: 80 },
+      { name: 'Atomiserad dextros', g: 22 },
       { name: 'Flytande äggula', g: 50 },
       { name: 'Bladgelatin', g: 1.7 },
       { name: 'Vaniljextrakt (eller 2g vaniljpulver)', g: 10 },
@@ -583,7 +583,7 @@ const RECIPES = {
     steps: [
       'Gelatin i kallt vatten 10 min. Krama ur när den är mjuk.',
       'Vispa skummjölkspulver kallt i grädde+mjölk i kastrull (annars klumpar). Om vaniljpulver: vispa i nu.',
-      'Vispa flytande äggula + strösocker + glykossirap + salt slätt i en bunke.',
+      'Vispa flytande äggula + strösocker + dextros + salt slätt i en bunke.',
       'Rör ner ägg-blandningen i den kalla gräddmjölken i kastrullen (allt kallt mot kallt — ingen tempering behövs).',
       'Värm under konstant omrörning till <strong>83°C</strong> (flytande äggula tål inte mer, curdling-risk).',
       'Av plattan → smält gelatin i. Om vaniljextrakt: tillsätt nu (värme förångar smakämnena).',
@@ -601,9 +601,8 @@ const RECIPES = {
       { name: 'Skummjölkspulver', g: 20 },
       { name: 'Mörk choklad 70%', g: 90 },
       { name: 'Kakao (holländsk)', g: 20 },
-      { name: 'Strösocker', g: 50 },
-      { name: 'Honung', g: 20 },
-      { name: 'Glykossirap', g: 30 },
+      { name: 'Strösocker', g: 52 },
+      { name: 'Atomiserad dextros', g: 30 },
       { name: 'Flytande äggula', g: 40 },
       { name: 'Bladgelatin', g: 1.7 },
       { name: 'Salt', g: 1 }
@@ -613,7 +612,7 @@ const RECIPES = {
       'Gelatin i kallt vatten 10 min.',
       'Vispa skummjölkspulver + kakao kallt i grädde+mjölk. Värm till 75°C, vispa botten kontinuerligt (kakao bränns lätt).',
       'Av plattan, häll över hackad choklad i en bunke. Vispa slätt.',
-      'Vispa flytande äggula + socker + honung + glykossirap + salt. Tempera (honungen löser sig i den varma chokladbasen utan problem).',
+      'Vispa flytande äggula + socker + dextros + salt slätt (dextrosen löser sig lätt i den varma chokladbasen).',
       'Tillbaka i kastrullen. <strong>83°C</strong> — gå efter TEMP, inte konsistens (chokladbasen luras tjock tidigt).',
       'Av plattan → smält gelatinet i.',
       'Sila → isbad → kyl <strong>minst 24h</strong> (choklad behöver det extra dygnet, smaken djupnar markant).',
@@ -639,7 +638,7 @@ const RECIPES = {
       { name: 'Mjölk 3%', g: 170 },
       { name: 'Skummjölkspulver', g: 30 },
       { name: 'Strösocker (i basen)', g: 45 },
-      { name: 'Glykossirap', g: 35 },
+      { name: 'Atomiserad dextros', g: 22 },
       { name: 'Flytande äggula', g: 30 },
       { name: 'Bladgelatin', g: 1.7 },
       { name: 'Salt', g: 1 },
@@ -650,7 +649,7 @@ const RECIPES = {
       '<strong>Dag 1:</strong> Macerera bär + socker + citron 30 min. Mosa lätt. Koka in tills volymen halverats (~235g, sirapig). Kyl över natt.',
       '<strong>Dag 2:</strong> Gelatin i kallt vatten 10 min. Krama ur.',
       'Vispa skummjölkspulver kallt i grädde+mjölk (annars klumpar). Värm till 70°C.',
-      'Vispa flytande äggula + socker + glykossirap + salt. Tempera, tillbaka, <strong>83°C</strong>.',
+      'Vispa flytande äggula + socker + dextros + salt. Tempera, tillbaka, <strong>83°C</strong>.',
       'Av plattan → smält gelatin i. Sila → isbad → kyl <strong>12h</strong>.',
       'Strax före churning: rör ner kallt bär-koncentrat i den kalla crème-basen. Smaka av.',
       'Vill du chunks → spara 50g koncentrat och swirl:a via lockets öppning sista 1 min.',
@@ -666,9 +665,9 @@ const RECIPES = {
       { name: 'Mjölk 3%', g: 112.5 },
       { name: 'Skummjölkspulver', g: 20 },
       { name: 'Passionsfruktspuré (reducerad, silad)', g: 125 },
-      { name: 'Strösocker', g: 70 },
+      { name: 'Strösocker', g: 48 },
+      { name: 'Atomiserad dextros', g: 14 },
       { name: 'Flytande äggula', g: 60 },
-      { name: 'Glukossirap', g: 12.5 },
       { name: 'Bladgelatin', g: 1.7 }
     ],
     mognad: '12h',
@@ -676,7 +675,7 @@ const RECIPES = {
       '<strong>Förbered passion (dagen innan eller minst 4h innan):</strong> Tina <strong>250g</strong> fryst passionsfrukt. Koka upp, <strong>sila bort kärnorna</strong> (de ger grynig textur i glass). Reducera den silade puré:n till <strong>125g</strong> koncentrerad smak. <strong>Kyl helt</strong> — passion får ALDRIG värmas tillsammans med mjölken (citronsyran curdlar proteinerna vid 60°C+).',
       'Gelatin i kallt vatten 10 min. Krama ur.',
       'Vispa skummjölkspulver kallt i grädde+mjölk i kastrull (annars klumpar).',
-      'Vispa flytande äggula + strösocker + glukossirap slätt i bunke.',
+      'Vispa flytande äggula + strösocker + dextros slätt i bunke.',
       'Rör ner ägg-blandningen i den kalla gräddmjölken (kallt mot kallt — ingen tempering behövs). Värm under omrörning till <strong>83°C</strong>.',
       'Av plattan → smält gelatin i. Sila → isbad → kyl <strong>12h</strong>.',
       'Strax före churning: <strong>rör ner KALL passion-puré i KALL crème-bas</strong>. Smaka av.',
@@ -692,9 +691,9 @@ const RECIPES = {
       { name: 'Mjölk 3%', g: 112.5 },
       { name: 'Skummjölkspulver', g: 15 },
       { name: 'Reducerad kokosmjölk (från ~500g)', g: 180 },
-      { name: 'Strösocker', g: 90 },
+      { name: 'Strösocker', g: 70 },
+      { name: 'Atomiserad dextros', g: 38 },
       { name: 'Flytande äggula', g: 60 },
-      { name: 'Glukossirap', g: 12.5 },
       { name: 'Bladgelatin', g: 1.7 },
       { name: 'Rostad kokosflakes (valfritt, sista 2 min)', g: 25 }
     ],
@@ -705,12 +704,12 @@ const RECIPES = {
       '<strong>Rosta kokosflakes (valfritt men gör glassen):</strong> Torrosta i panna eller ugn 175°C tills gyllenbruna, 5–8 min. Rör/vänd ofta — bränns snabbt. Kyl.',
       'Gelatin i kallt vatten 10 min.',
       'Värm grädde + mjölk + kall kokoskoncentratet tillsammans till 70°C (ingen curdling-risk — kokos är inte syrligt, till skillnad från passion).',
-      'Vispa flytande äggula + socker + glukossirap. Tempera, tillbaka, <strong>83°C</strong>.',
+      'Vispa flytande äggula + socker + dextros. Tempera, tillbaka, <strong>83°C</strong>.',
       'Gelatin i. Sila → isbad → mogna <strong>12h</strong>.',
       'Wilfa 30 min. <strong>Sista 2 min:</strong> häll in rostad kokos via lockets öppning.',
       'Frys 4h.'
     ],
-    note: 'PAC är i BAD-zon (~20) — glassen blir hård direkt ur frys. <strong>Temporär workaround:</strong> låt stå 10 min i rumstemp före servering. <strong>Permanent fix (kräver inköp):</strong> byt 25g sucrose mot 25g <em>atomiserad dextros</em> (PAC 190, samma sötma). Lyfter PAC till ~22. OBS: NOT glykossirap — den har PAC 80 och skulle SÄNKA PAC. Olika molekyler. Fettet är medvetet högt (rich-target) — kokos är fettig av natur.'
+    note: 'PAC är nu i grön zon (~27) tack vare 38g <em>atomiserad dextros</em> (PAC 190) — glassen blir skopbar direkt ur frys utan att bli sötare. Fettet är medvetet högt (rich-target) — kokos är fettig av natur.'
   },
   kaffe: {
     label: 'Kaffe',
@@ -719,9 +718,9 @@ const RECIPES = {
       { name: 'Grädde 36%', g: 251 },
       { name: 'Kaffemjölk (mjölk 3% + infusionerat kaffe)', g: 205 },
       { name: 'Skummjölkspulver', g: 15 },
-      { name: 'Strösocker', g: 110 },
+      { name: 'Strösocker', g: 95 },
       { name: 'Flytande äggula', g: 110 },
-      { name: 'Glukossirap', g: 23 },
+      { name: 'Atomiserad dextros', g: 23 },
       { name: 'Bladgelatin', g: 1.7 },
       { name: 'Mald kaffe (för infusion, filtreras bort)', g: 32, excludeFromBase: true }
     ],
@@ -730,7 +729,7 @@ const RECIPES = {
       '<strong>Förbered kaffemjölk:</strong> Värm 230–260g mjölk (3%) med 32g malt kaffe (frystorkat funkar också men färskmalet är bättre). Värm till strax under kokpunkten, dra av plattan, låt dra 10–15 min. Filtrera genom kaffefilter. <strong>Mät upp 205g kaffemjölk</strong> — fyll på med mer vanlig mjölk om för lite, eller starta om med mer mjölk om mycket förlorat i kaffegrumset.',
       'Gelatin i kallt vatten 10 min. Krama ur.',
       'Vispa skummjölkspulver kallt i grädde+kaffemjölken i kastrull (annars klumpar).',
-      'Vispa flytande äggula + strösocker + glukossirap slätt.',
+      'Vispa flytande äggula + strösocker + dextros slätt.',
       'Rör ner ägg-blandningen i den kalla gräddmjölken. Värm under konstant omrörning till <strong>83°C</strong>. Hög äggula-andel = tjocknar snabbt, håll koll.',
       'Av plattan → smält gelatin i. Sila → isbad → kyl <strong>12h</strong>.',
       'Wilfa 30–35 min. Frys 4h.'

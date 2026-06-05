@@ -18,7 +18,6 @@
     --accent-passion: #d89a1f;
     --accent-kokos: #8a7a5c;
     --accent-kaffe: #6b4226;
-    --accent-sesam: #4b4b54;
     --accent-lakrits: #2b2b33;
     --accent-vitchoklad: #c9a86a;
     --accent-pistage: #7a9a3e;
@@ -49,7 +48,6 @@
   body.theme-passion { --accent: var(--accent-passion); }
   body.theme-kokos { --accent: var(--accent-kokos); }
   body.theme-kaffe { --accent: var(--accent-kaffe); }
-  body.theme-sesam { --accent: var(--accent-sesam); }
   body.theme-lakrits { --accent: var(--accent-lakrits); }
   body.theme-vitchoklad { --accent: var(--accent-vitchoklad); }
   body.theme-pistage { --accent: var(--accent-pistage); }
@@ -77,7 +75,6 @@
   body.theme-passion .hero { background: linear-gradient(135deg, #2a1a08 0%, #7a5a18 40%, #f0c040 100%); }
   body.theme-kokos .hero { background: linear-gradient(135deg, #2a2218 0%, #5a4a38 40%, #d4c4a0 100%); }
   body.theme-kaffe .hero { background: linear-gradient(135deg, #1a0e06 0%, #3a2412 50%, #6b4226 100%); }
-  body.theme-sesam .hero { background: linear-gradient(135deg, #161618 0%, #34343a 50%, #6a6a72 100%); }
   body.theme-lakrits .hero { background: linear-gradient(135deg, #0c0c10 0%, #26262e 50%, #4a4a54 100%); }
   body.theme-vitchoklad .hero { background: linear-gradient(135deg, #2e2410 0%, #6a5630 50%, #e0c88a 100%); }
   body.theme-pistage .hero { background: linear-gradient(135deg, #1c2410 0%, #44581f 50%, #8aa848 100%); }
@@ -412,7 +409,6 @@
     <button data-recipe="passion">Passion</button>
     <button data-recipe="kokos">Kokos</button>
     <button data-recipe="kaffe">Kaffe</button>
-    <button data-recipe="sesam">Svart sesam</button>
     <button data-recipe="lakrits">Salt lakrits</button>
     <button data-recipe="vitchoklad">Vit choklad</button>
     <button data-recipe="pistage">Pistage</button>
@@ -551,7 +547,6 @@ const INGREDIENT_DB = {
   'Passionsfruktspuré (reducerad, silad)':               { sugars: { fructose: 0.22 } },  // 125g från ~250g pulp (dubblad koncentration)
   'Reducerad kokosmjölk (från ~500g)':                   { fat: 0.40, msnf: 0.04 },
   'Rostad kokosflakes (valfritt, sista 2 min)':          { fat: 0.65 },
-  'Svart sesampasta (rostad)':                           { fat: 0.55 },
   'Rostad vit choklad':                                  { fat: 0.32, sugars: { sucrose: 0.55 } },  // vit choklad ~32% kakaosmör + 55% socker
   'Pistagepasta (100%)':                                 { fat: 0.55 },
   '+ Äppelkompott (kall)':                               { sugars: { sucrose: 0.17, fructose: 0.17 } }   // ~180g från 350g äpple + 30g socker
@@ -789,32 +784,6 @@ const RECIPES = {
       'Wilfa 30–35 min. Frys 4h.'
     ],
     note: '<strong>Sweet spot-flaggor i din recept (info, inte korrigeringar):</strong><br>• <strong>Äggula 15.6%</strong> (~157 g/L) är klassisk italiensk caffè-stil, mycket rik. Om den känns för tung — sänk till 90g (12% / 117 g/L).<br>• <strong>Gelatin 4.4 g/kg</strong> är över target-zonen 2–3 g/kg → risk för gummikänsla efter 3+ dagar i frys. 1.5 blad (2.5g) räcker tekniskt.<br>• <strong>MSNF ~2.6%</strong> är lågt (zon 8–11%), men den höga äggulan + grädden kompenserar med proteiner och fett. Vill du gå "renare" balanserad: lägg till 25g skummjölkspulver och sänk grädden till 250g.'
-  },
-  sesam: {
-    label: 'Svart sesam',
-    base: 686,
-    items: [
-      { name: 'Grädde 40%', g: 170 },
-      { name: 'Mjölk 3%', g: 285 },
-      { name: 'Skummjölkspulver', g: 30 },
-      { name: 'Svart sesampasta (rostad)', g: 50 },
-      { name: 'Strösocker', g: 78 },
-      { name: 'Atomiserad dextros', g: 22 },
-      { name: 'Flytande äggula', g: 48 },
-      { name: 'Bladgelatin', g: 1.7 },
-      { name: 'Salt', g: 1 }
-    ],
-    mognad: '12h',
-    steps: [
-      'Egen pasta (valfritt): rosta 60g svart sesam i torr panna tills den knastrar och doftar, mal i mortel eller mixer med 1 tsk neutral olja till slät pasta. Eller köp färdig black sesame paste.',
-      'Gelatin i kallt vatten 10 min. Krama ur.',
-      'Vispa skummjölkspulver kallt i grädde+mjölk i kastrull. Vispa in sesampastan tills slät.',
-      'Vispa flytande äggula + strösocker + dextros + salt slätt i en bunke.',
-      'Rör ner ägg-blandningen i den kalla sesambasen. Värm under omrörning till <strong>83°C</strong>.',
-      'Av plattan → smält gelatin i. Sila → isbad → mogna <strong>12h</strong>.',
-      'Wilfa 30–35 min. Frys 4h.'
-    ],
-    note: 'Slående grafitgrå färg, nötig som tahini. Använd ROSTAD svart sesam — orostad smakar platt. En saltkola-swirl sista minuten är magiskt (valfritt).'
   },
   lakrits: {
     label: 'Salt lakrits',

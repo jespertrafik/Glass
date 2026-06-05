@@ -484,7 +484,7 @@ const POD_FACTOR = { sucrose: 100, dextrose: 70,  fructose: 170, glucose_de42: 5
   Saknas en ingrediens i DB:n och har inga override-fält → räknas som 0 (vatten/inert).
 */
 const INGREDIENT_DB = {
-  'Grädde 36%':                                          { fat: 0.36, msnf: 0.05,  sugars: { lactose: 0.03  } },
+  'Grädde 40%':                                          { fat: 0.40, msnf: 0.047, sugars: { lactose: 0.028 } },
   'Mjölk 3%':                                            { fat: 0.03, msnf: 0.088, sugars: { lactose: 0.046 } },
   'Kaffemjölk (mjölk 3% + infusionerat kaffe)':          { fat: 0.03, msnf: 0.088, sugars: { lactose: 0.046 } },
   'Skummjölkspulver':                                    { fat: 0,    msnf: 0.96,  sugars: { lactose: 0.52  } },
@@ -569,7 +569,7 @@ const RECIPES = {
     label: 'Vanilj',
     base: 698,
     items: [
-      { name: 'Grädde 36%', g: 215 },
+      { name: 'Grädde 40%', g: 215 },
       { name: 'Mjölk 3%', g: 275 },
       { name: 'Skummjölkspulver', g: 30 },
       { name: 'Strösocker', g: 80 },
@@ -596,7 +596,7 @@ const RECIPES = {
     label: 'Choklad',
     base: 706,
     items: [
-      { name: 'Grädde 36%', g: 150 },
+      { name: 'Grädde 40%', g: 150 },
       { name: 'Mjölk 3%', g: 285 },
       { name: 'Skummjölkspulver', g: 20 },
       { name: 'Mörk choklad 70%', g: 90 },
@@ -634,7 +634,7 @@ const RECIPES = {
       note: 'Macerera 30 min, mosa lätt, koka in till 235 g (volymen halveras, sirapig). Kyl över natt.'
     },
     items: [
-      { name: 'Grädde 36%', g: 155 },
+      { name: 'Grädde 40%', g: 155 },
       { name: 'Mjölk 3%', g: 170 },
       { name: 'Skummjölkspulver', g: 30 },
       { name: 'Strösocker (i basen)', g: 45 },
@@ -661,7 +661,7 @@ const RECIPES = {
     base: 539,
     pacTarget: 'fruit',
     items: [
-      { name: 'Grädde 36%', g: 137.5 },
+      { name: 'Grädde 40%', g: 137.5 },
       { name: 'Mjölk 3%', g: 112.5 },
       { name: 'Skummjölkspulver', g: 20 },
       { name: 'Passionsfruktspuré (reducerad, silad)', g: 125 },
@@ -687,7 +687,7 @@ const RECIPES = {
     base: 608,
     fatTarget: 'rich',
     items: [
-      { name: 'Grädde 36%', g: 137.5 },
+      { name: 'Grädde 40%', g: 137.5 },
       { name: 'Mjölk 3%', g: 112.5 },
       { name: 'Skummjölkspulver', g: 15 },
       { name: 'Reducerad kokosmjölk (från ~500g)', g: 180 },
@@ -715,7 +715,7 @@ const RECIPES = {
     label: 'Kaffe',
     base: 715,
     items: [
-      { name: 'Grädde 36%', g: 251 },
+      { name: 'Grädde 40%', g: 251 },
       { name: 'Kaffemjölk (mjölk 3% + infusionerat kaffe)', g: 205 },
       { name: 'Skummjölkspulver', g: 15 },
       { name: 'Strösocker', g: 95 },

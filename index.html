@@ -409,7 +409,7 @@
       <button class="preset-btn" data-cream="36" type="button">Grädde 36%</button>
       <button class="preset-btn active" data-cream="40" type="button">Grädde 40%</button>
     </div>
-    <div class="wilfa-note" id="creamNote">40% ger rikare, krämigare glass. 36% är magrare (lägre fett-%) men oftast billigare — recepten funkar med båda, gram oförändrade.</div>
+    <div class="wilfa-note" id="creamNote">Receptet justeras automatiskt: vid 36% ökas grädden och mjölken minskas lika mycket, så glassen blir lika krämig (samma fett, samma basvikt) oavsett vilken grädde du köpt. 40% = mindre grädde behövs.</div>
   </div>
 
   <div class="recipe">
@@ -754,11 +754,22 @@ let currentRecipe = 'vanilj';
 let roundMode = false;
 let creamPct = 40; // 36 eller 40 — byts via gräddtoggeln, påverkar fett/MSNF i alla recept
 
-// Byter gräddens namn (och därmed DB-uppslaget) till vald fetthalt. Övriga items oförändrade.
+// Anpassar receptet till vald grädde: kompenserar fettet genom att justera grädde/mjölk-gram
+// så att BÅDE fetthalten och basvikten hålls konstant oavsett om du köpt 36% eller 40%.
+// Kanonisk referens = 40%. Vid 36% ökas grädden och mjölken minskas lika många gram.
 function resolveCream(items) {
-  return items.map(it =>
-    (it.name && it.name.indexOf('Grädde ') === 0) ? { ...it, name: 'Grädde ' + creamPct + '%' } : it
-  );
+  const cream = items.find(it => it.name && it.name.indexOf('Grädde ') === 0);
+  if (!cream) return items;
+  const fc = creamPct / 100;
+  const ratio = (0.40 - 0.03) / (fc - 0.03);   // grädde-faktor: 1.000 vid 40%, ~1.121 vid 36%
+  const newCreamG = cream.g * ratio;
+  const delta = newCreamG - cream.g;            // extra grädde-gram (0 vid 40%)
+  const milk = items.find(it => it.name && (it.name.indexOf('Mjölk') === 0 || it.name.indexOf('Kaffemjölk') === 0));
+  return items.map(it => {
+    if (it === cream) return { ...it, name: 'Grädde ' + creamPct + '%', g: newCreamG };
+    if (it === milk)  return { ...it, g: it.g - delta };
+    return it;
+  });
 }
 
 function roundG(g) {

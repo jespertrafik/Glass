@@ -403,6 +403,15 @@
     <div class="wilfa-note" id="wilfaNote">✓ I Wilfa C15 sweet spot (60–70% fyllnad, optimal overrun)</div>
   </div>
 
+  <div class="card">
+    <div class="card-title">Grädde fetthalt</div>
+    <div class="vol-presets" id="creamToggle" style="grid-template-columns: repeat(2, 1fr);">
+      <button class="preset-btn" data-cream="36" type="button">Grädde 36%</button>
+      <button class="preset-btn active" data-cream="40" type="button">Grädde 40%</button>
+    </div>
+    <div class="wilfa-note" id="creamNote">40% ger rikare, krämigare glass. 36% är magrare (lägre fett-%) men oftast billigare — recepten funkar med båda, gram oförändrade.</div>
+  </div>
+
   <div class="recipe">
     <div class="recipe-head">
       <div class="recipe-title" id="recipeTitle">Recept · Vanilj</div>
@@ -484,6 +493,7 @@ const POD_FACTOR = { sucrose: 100, dextrose: 70,  fructose: 170, glucose_de42: 5
   Saknas en ingrediens i DB:n och har inga override-fält → räknas som 0 (vatten/inert).
 */
 const INGREDIENT_DB = {
+  'Grädde 36%':                                          { fat: 0.36, msnf: 0.05,  sugars: { lactose: 0.03  } },
   'Grädde 40%':                                          { fat: 0.40, msnf: 0.047, sugars: { lactose: 0.028 } },
   'Mjölk 3%':                                            { fat: 0.03, msnf: 0.088, sugars: { lactose: 0.046 } },
   'Kaffemjölk (mjölk 3% + infusionerat kaffe)':          { fat: 0.03, msnf: 0.088, sugars: { lactose: 0.046 } },
@@ -518,8 +528,8 @@ const TARGETS = {
   pac:      v => v < 20 || v > 32 ? 'bad' : (v >= 22 && v <= 28) ? 'ok' : 'warn',
   pacFruit: v => v < 22 || v > 32 ? 'bad' : 'ok',           // frukt tål 22–32, vatten behöver mer antifrys
   pod:      v => v < 12 || v > 24 ? 'bad' : (v >= 14 && v <= 20) ? 'ok' : 'warn',
-  fat:      v => (v >= 6 && v <= 12) ? 'ok' : v > 20 ? 'bad' : 'warn',
-  fatRich:  v => (v >= 6 && v <= 12) ? 'ok' : v > 30 ? 'bad' : 'warn',  // "rich" — fett-tunga recept (kokos)
+  fat:      v => (v >= 9 && v <= 18) ? 'ok' : (v < 6 || v > 24) ? 'bad' : 'warn',  // premium ice cream 12–18% (Häagen-Dazs ~15); 9–18 inkluderar lättare fruktrecept. Gelato vore 4–9.
+  fatRich:  v => (v >= 9 && v <= 18) ? 'ok' : v > 30 ? 'bad' : 'warn',  // "rich" — fett-tunga recept (kokos), tål upp till 30 innan bad
   msnf:     v => v < 6 || v > 14 ? 'bad' : (v >= 8 && v <= 12) ? 'ok' : 'warn',
   gelatin:  v => v > 3.5 ? 'bad' : (v >= 1.5 && v <= 3) ? 'ok' : 'warn'
 };
@@ -742,6 +752,14 @@ const $ = id => document.getElementById(id);
 const vol = $('volume');
 let currentRecipe = 'vanilj';
 let roundMode = false;
+let creamPct = 40; // 36 eller 40 — byts via gräddtoggeln, påverkar fett/MSNF i alla recept
+
+// Byter gräddens namn (och därmed DB-uppslaget) till vald fetthalt. Övriga items oförändrade.
+function resolveCream(items) {
+  return items.map(it =>
+    (it.name && it.name.indexOf('Grädde ') === 0) ? { ...it, name: 'Grädde ' + creamPct + '%' } : it
+  );
+}
 
 function roundG(g) {
   if (g < 2) return Math.round(g * 10) / 10;
@@ -751,6 +769,7 @@ function roundG(g) {
 
 function render() {
   const r = RECIPES[currentRecipe];
+  const items = resolveCream(r.items); // gräddens fetthalt enligt toggeln
   const target = Math.max(100, parseFloat(vol.value) || 0);
 
   // Skala faktor: target / recept-bas (inklusive bär-koncentrat för jordgubb)
@@ -792,7 +811,7 @@ function render() {
     html += '<div class="sub-recipe-title">Mejeri-bas (dag 2)</div>';
   }
 
-  r.items.forEach(it => {
+  items.forEach(it => {
     let amt, unit;
     if (it.unit) {
       amt = Math.max(0.5, Math.round(it.g * factor * 2) / 2);
@@ -814,11 +833,11 @@ function render() {
 
   // Total
   let totalG = 0;
-  r.items.forEach(it => { if (!it.unit && !it.excludeFromBase) totalG += it.g * factor; });
+  items.forEach(it => { if (!it.unit && !it.excludeFromBase) totalG += it.g * factor; });
   $('amtTotal').innerHTML = Math.round(totalG) + '<span style="font-size:12px;color:var(--cream);margin-left:4px;">g</span>';
 
   // Stats — räknas live från ingredienserna (skala-invariant: använder r.items + r.base)
-  const s = computeStats(r.items, r.base);
+  const s = computeStats(items, r.base);
   const fmt = (label, val, decimals, unit, target) => {
     const cls = TARGETS[target] ? ' class="' + 'stat-' + TARGETS[target](val) + '"' : '';
     return label + ' <span' + cls + '>' + val.toFixed(decimals) + unit + '</span>';
@@ -894,6 +913,17 @@ function updatePresets() {
   });
 }
 vol.addEventListener('input', () => { updatePresets(); render(); });
+
+// Gräddtoggle 36% / 40%
+document.querySelectorAll('#creamToggle .preset-btn').forEach(btn => {
+  btn.addEventListener('click', () => {
+    creamPct = parseInt(btn.dataset.cream);
+    document.querySelectorAll('#creamToggle .preset-btn').forEach(b =>
+      b.classList.toggle('active', parseInt(b.dataset.cream) === creamPct)
+    );
+    render();
+  });
+});
 
 // Avrundning
 $('roundBtn').addEventListener('click', () => {

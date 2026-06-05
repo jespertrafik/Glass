@@ -18,6 +18,15 @@
     --accent-passion: #d89a1f;
     --accent-kokos: #8a7a5c;
     --accent-kaffe: #6b4226;
+    --accent-sesam: #4b4b54;
+    --accent-lakrits: #2b2b33;
+    --accent-olivolja: #7d8a3c;
+    --accent-miso: #b5763a;
+    --accent-vitchoklad: #c9a86a;
+    --accent-pistage: #7a9a3e;
+    --accent-earlgrey: #6a6f8a;
+    --accent-matcha: #6fa845;
+    --accent-romrussin: #7a4a3a;
     --line: #d4dae3;
     --cream: #e8c8a8;
   }
@@ -39,6 +48,15 @@
   body.theme-passion { --accent: var(--accent-passion); }
   body.theme-kokos { --accent: var(--accent-kokos); }
   body.theme-kaffe { --accent: var(--accent-kaffe); }
+  body.theme-sesam { --accent: var(--accent-sesam); }
+  body.theme-lakrits { --accent: var(--accent-lakrits); }
+  body.theme-olivolja { --accent: var(--accent-olivolja); }
+  body.theme-miso { --accent: var(--accent-miso); }
+  body.theme-vitchoklad { --accent: var(--accent-vitchoklad); }
+  body.theme-pistage { --accent: var(--accent-pistage); }
+  body.theme-earlgrey { --accent: var(--accent-earlgrey); }
+  body.theme-matcha { --accent: var(--accent-matcha); }
+  body.theme-romrussin { --accent: var(--accent-romrussin); }
   .wrap { max-width: 560px; margin: 0 auto; padding: 0 16px; }
   .hero {
     position: relative;
@@ -57,6 +75,15 @@
   body.theme-passion .hero { background: linear-gradient(135deg, #2a1a08 0%, #7a5a18 40%, #f0c040 100%); }
   body.theme-kokos .hero { background: linear-gradient(135deg, #2a2218 0%, #5a4a38 40%, #d4c4a0 100%); }
   body.theme-kaffe .hero { background: linear-gradient(135deg, #1a0e06 0%, #3a2412 50%, #6b4226 100%); }
+  body.theme-sesam .hero { background: linear-gradient(135deg, #161618 0%, #34343a 50%, #6a6a72 100%); }
+  body.theme-lakrits .hero { background: linear-gradient(135deg, #0c0c10 0%, #26262e 50%, #4a4a54 100%); }
+  body.theme-olivolja .hero { background: linear-gradient(135deg, #1e220c 0%, #4a5420 50%, #8a9a48 100%); }
+  body.theme-miso .hero { background: linear-gradient(135deg, #2a1808 0%, #6a4418 45%, #c2823a 100%); }
+  body.theme-vitchoklad .hero { background: linear-gradient(135deg, #2e2410 0%, #6a5630 50%, #e0c88a 100%); }
+  body.theme-pistage .hero { background: linear-gradient(135deg, #1c2410 0%, #44581f 50%, #8aa848 100%); }
+  body.theme-earlgrey .hero { background: linear-gradient(135deg, #14161f 0%, #34384f 50%, #7a7f9a 100%); }
+  body.theme-matcha .hero { background: linear-gradient(135deg, #16240e 0%, #3a5a1e 50%, #7fb850 100%); }
+  body.theme-romrussin .hero { background: linear-gradient(135deg, #1e0e08 0%, #4a2418 50%, #8a5a40 100%); }
   .hero::before {
     content: '';
     position: absolute;
@@ -102,7 +129,7 @@
   }
   .tabs {
     display: grid;
-    grid-template-columns: repeat(6, 1fr);
+    grid-template-columns: repeat(auto-fit, minmax(82px, 1fr));
     gap: 0;
     margin-bottom: 14px;
     background: var(--bg-card);
@@ -382,6 +409,15 @@
     <button data-recipe="passion">Passion</button>
     <button data-recipe="kokos">Kokos</button>
     <button data-recipe="kaffe">Kaffe</button>
+    <button data-recipe="sesam">Svart sesam</button>
+    <button data-recipe="lakrits">Salt lakrits</button>
+    <button data-recipe="olivolja">Olivolja</button>
+    <button data-recipe="miso">Miso-kola</button>
+    <button data-recipe="vitchoklad">Vit choklad</button>
+    <button data-recipe="pistage">Pistage</button>
+    <button data-recipe="earlgrey">Earl Grey</button>
+    <button data-recipe="matcha">Matcha</button>
+    <button data-recipe="romrussin">Rom &amp; russin</button>
   </div>
 
   <div class="card">
@@ -510,8 +546,12 @@ const INGREDIENT_DB = {
   '+ Bär-koncentrat (kallt)':                            { sugars: { fructose: 0.18 } },
   'Passionsfruktspuré (reducerad, silad)':               { sugars: { fructose: 0.22 } },  // 125g från ~250g pulp (dubblad koncentration)
   'Reducerad kokosmjölk (från ~500g)':                   { fat: 0.40, msnf: 0.04 },
-  'Rostad kokosflakes (valfritt, sista 2 min)':          { fat: 0.65 }
-  // Bladgelatin, Vaniljextrakt, Salt, Mald kaffe (filtreras bort) — räknas som 0
+  'Rostad kokosflakes (valfritt, sista 2 min)':          { fat: 0.65 },
+  'Svart sesampasta (rostad)':                           { fat: 0.55 },
+  'Olivolja (extra virgin)':                             { fat: 1.0  },
+  'Rostad vit choklad':                                  { fat: 0.32, sugars: { sucrose: 0.55 } },  // vit choklad ~32% kakaosmör + 55% socker
+  'Pistagepasta (100%)':                                 { fat: 0.55 }
+  // Bladgelatin, Vaniljextrakt, Lakritspulver, Ljus miso, Matcha, Kardemumma, Earl Grey-te, Mörk rom, Rom-russin, Salt, Flingsalt, Mald kaffe — räknas som 0 (vatten/inert eller filtreras/exkluderas)
 };
 
 function getIngrProps(item) {
@@ -745,6 +785,238 @@ const RECIPES = {
       'Wilfa 30–35 min. Frys 4h.'
     ],
     note: '<strong>Sweet spot-flaggor i din recept (info, inte korrigeringar):</strong><br>• <strong>Äggula 15.6%</strong> (~157 g/L) är klassisk italiensk caffè-stil, mycket rik. Om den känns för tung — sänk till 90g (12% / 117 g/L).<br>• <strong>Gelatin 4.4 g/kg</strong> är över target-zonen 2–3 g/kg → risk för gummikänsla efter 3+ dagar i frys. 1.5 blad (2.5g) räcker tekniskt.<br>• <strong>MSNF ~2.6%</strong> är lågt (zon 8–11%), men den höga äggulan + grädden kompenserar med proteiner och fett. Vill du gå "renare" balanserad: lägg till 25g skummjölkspulver och sänk grädden till 250g.'
+  },
+  sesam: {
+    label: 'Svart sesam',
+    base: 686,
+    items: [
+      { name: 'Grädde 40%', g: 170 },
+      { name: 'Mjölk 3%', g: 285 },
+      { name: 'Skummjölkspulver', g: 30 },
+      { name: 'Svart sesampasta (rostad)', g: 50 },
+      { name: 'Strösocker', g: 78 },
+      { name: 'Atomiserad dextros', g: 22 },
+      { name: 'Flytande äggula', g: 48 },
+      { name: 'Bladgelatin', g: 1.7 },
+      { name: 'Salt', g: 1 }
+    ],
+    mognad: '12h',
+    steps: [
+      'Egen pasta (valfritt): rosta 60g svart sesam i torr panna tills den knastrar och doftar, mal i mortel eller mixer med 1 tsk neutral olja till slät pasta. Eller köp färdig black sesame paste.',
+      'Gelatin i kallt vatten 10 min. Krama ur.',
+      'Vispa skummjölkspulver kallt i grädde+mjölk i kastrull. Vispa in sesampastan tills slät.',
+      'Vispa flytande äggula + strösocker + dextros + salt slätt i en bunke.',
+      'Rör ner ägg-blandningen i den kalla sesambasen. Värm under omrörning till <strong>83°C</strong>.',
+      'Av plattan → smält gelatin i. Sila → isbad → mogna <strong>12h</strong>.',
+      'Wilfa 30–35 min. Frys 4h.'
+    ],
+    note: 'Slående grafitgrå färg, nötig som tahini. Använd ROSTAD svart sesam — orostad smakar platt. En saltkola-swirl sista minuten är magiskt (valfritt).'
+  },
+  lakrits: {
+    label: 'Salt lakrits',
+    base: 691,
+    items: [
+      { name: 'Grädde 40%', g: 210 },
+      { name: 'Mjölk 3%', g: 280 },
+      { name: 'Skummjölkspulver', g: 30 },
+      { name: 'Strösocker', g: 78 },
+      { name: 'Atomiserad dextros', g: 24 },
+      { name: 'Flytande äggula', g: 50 },
+      { name: 'Bladgelatin', g: 1.7 },
+      { name: 'Lakritspulver (rå)', g: 14 },
+      { name: 'Flingsalt', g: 3 }
+    ],
+    mognad: '12h',
+    steps: [
+      'Gelatin i kallt vatten 10 min. Krama ur.',
+      'Vispa skummjölkspulver kallt i grädde+mjölk i kastrull. Sikta in rålakritspulvret och vispa slätt (klumpar lätt).',
+      'Vispa flytande äggula + strösocker + dextros + flingsalt slätt.',
+      'Rör ner i basen. Värm under omrörning till <strong>83°C</strong>. Lakritsen tjocknar lite extra.',
+      'Av plattan → smält gelatin i. Sila → isbad → mogna <strong>12h</strong>.',
+      'Wilfa 30–35 min. Frys 4h.'
+    ],
+    note: 'Rålakritspulver (lakritsrot) ger djup, naturlig lakritssmak. Vill du ha äkta SALT lakrits: tillsätt 1–2g salmiaksalt (ammoniumklorid) med flingsaltet — börja lågt, salmiak är kraftfullt.'
+  },
+  olivolja: {
+    label: 'Olivolja & flingsalt',
+    base: 648,
+    items: [
+      { name: 'Grädde 40%', g: 120 },
+      { name: 'Mjölk 3%', g: 300 },
+      { name: 'Skummjölkspulver', g: 32 },
+      { name: 'Olivolja (extra virgin)', g: 35 },
+      { name: 'Strösocker', g: 80 },
+      { name: 'Atomiserad dextros', g: 22 },
+      { name: 'Flytande äggula', g: 55 },
+      { name: 'Bladgelatin', g: 1.7 },
+      { name: 'Flingsalt', g: 2 }
+    ],
+    mognad: '12h',
+    steps: [
+      'Gelatin i kallt vatten 10 min. Krama ur.',
+      'Vispa skummjölkspulver kallt i grädde+mjölk i kastrull.',
+      'Vispa flytande äggula + strösocker + dextros slätt (extra äggula här bär emulsionen av oljan).',
+      'Rör ner i basen. Värm under omrörning till <strong>83°C</strong>.',
+      'Av plattan → smält gelatin i. Vispa NU in olivoljan i tunn stråle medan basen är varm (emulgerar slätt). Sila → isbad → mogna <strong>12h</strong>.',
+      'Wilfa 30–35 min. Frys 4h. Strö flingsalt över vid servering.'
+    ],
+    note: 'Använd en fruktig extra virgin du gillar att smaka på — oljan ÄR smaken. Extra äggula (55g) emulgerar oljan så glassen blir len, inte fet. Flingsaltet på toppen gör rätten.'
+  },
+  miso: {
+    label: 'Miso-kola',
+    base: 688,
+    items: [
+      { name: 'Grädde 40%', g: 210 },
+      { name: 'Mjölk 3%', g: 278 },
+      { name: 'Skummjölkspulver', g: 30 },
+      { name: 'Strösocker', g: 78 },
+      { name: 'Atomiserad dextros', g: 22 },
+      { name: 'Flytande äggula', g: 50 },
+      { name: 'Bladgelatin', g: 1.7 },
+      { name: 'Ljus miso (vit/shiro)', g: 18 }
+    ],
+    mognad: '12h',
+    steps: [
+      'Gelatin i kallt vatten 10 min. Krama ur.',
+      'Vispa skummjölkspulver kallt i grädde+mjölk i kastrull. Lös upp mison i en skvätt av mjölken först så den inte klumpar, vispa sedan in.',
+      'Vispa flytande äggula + strösocker + dextros slätt. (Ingen extra salt — mison saltar.)',
+      'Rör ner i basen. Värm under omrörning till <strong>83°C</strong>.',
+      'Av plattan → smält gelatin i. Sila → isbad → mogna <strong>12h</strong>.',
+      'Saltkola-swirl (valfritt men rekommenderas): koka 60g socker till bärnstensfärgad karamell, av plattan rör i 40g grädde + en nypa salt. Kyl. Swirla in via locköppningen sista minuten.',
+      'Wilfa 30–35 min. Frys 4h.'
+    ],
+    note: 'Ljus miso ger umami och en salt-söt kola-känsla utan att smaka asiatiskt — som salt karamell fast djupare. 18g räcker; mer och det blir för salt.'
+  },
+  vitchoklad: {
+    label: 'Rostad vit choklad & kardemumma',
+    base: 647,
+    items: [
+      { name: 'Grädde 40%', g: 150 },
+      { name: 'Mjölk 3%', g: 293 },
+      { name: 'Skummjölkspulver', g: 25 },
+      { name: 'Rostad vit choklad', g: 70 },
+      { name: 'Strösocker', g: 40 },
+      { name: 'Atomiserad dextros', g: 20 },
+      { name: 'Flytande äggula', g: 45 },
+      { name: 'Bladgelatin', g: 1.7 },
+      { name: 'Kardemumma (mald)', g: 2 },
+      { name: 'Salt', g: 0.5 }
+    ],
+    mognad: '12h',
+    steps: [
+      'Rosta vit choklad: bred ut 70g hackad vit choklad på plåt, 150°C ugn, rör om var 3–4 min tills den blir gyllenbrun och karamelliserad (10–15 min). Den klumpar sig först — rör slätt. Kyl något.',
+      'Gelatin i kallt vatten 10 min. Krama ur.',
+      'Vispa skummjölkspulver + kardemumma kallt i grädde+mjölk. Värm till 70°C, häll över den rostade chokladen i en bunke, vispa slätt.',
+      'Vispa flytande äggula + socker + dextros + salt slätt. Rör tillbaka allt i kastrullen.',
+      'Värm under omrörning till <strong>83°C</strong>.',
+      'Av plattan → smält gelatin i. Sila → isbad → mogna <strong>12h</strong>.',
+      'Wilfa 30–35 min. Frys 4h.'
+    ],
+    note: 'Rostad (karamelliserad) vit choklad smakar kola/dulce de leche — helt annat än vanlig vit choklad. Kardemumman ger nordisk värme. Sockret är sänkt eftersom chokladen redan är söt.'
+  },
+  pistage: {
+    label: 'Pistage',
+    base: 686,
+    items: [
+      { name: 'Grädde 40%', g: 165 },
+      { name: 'Mjölk 3%', g: 285 },
+      { name: 'Skummjölkspulver', g: 30 },
+      { name: 'Pistagepasta (100%)', g: 55 },
+      { name: 'Strösocker', g: 78 },
+      { name: 'Atomiserad dextros', g: 22 },
+      { name: 'Flytande äggula', g: 48 },
+      { name: 'Bladgelatin', g: 1.7 },
+      { name: 'Salt', g: 1 }
+    ],
+    mognad: '12h',
+    steps: [
+      'Gelatin i kallt vatten 10 min. Krama ur.',
+      'Vispa skummjölkspulver kallt i grädde+mjölk i kastrull. Vispa in pistagepastan tills slät.',
+      'Vispa flytande äggula + strösocker + dextros + salt slätt.',
+      'Rör ner i basen. Värm under omrörning till <strong>83°C</strong>.',
+      'Av plattan → smält gelatin i. Sila → isbad → mogna <strong>12h</strong>.',
+      'Wilfa 30–35 min. Frys 4h.'
+    ],
+    note: 'Använd 100% pistagepasta (helst siciliansk Bronte), INTE sötad pistagekräm — den äkta pastan ger djup, salt-nötig smak och naturlig färg. Skippa grön färg; äkta pistage är dovt olivgrön.'
+  },
+  earlgrey: {
+    label: 'Earl Grey',
+    base: 680,
+    items: [
+      { name: 'Grädde 40%', g: 215 },
+      { name: 'Mjölk 3%', g: 280 },
+      { name: 'Skummjölkspulver', g: 30 },
+      { name: 'Strösocker', g: 80 },
+      { name: 'Atomiserad dextros', g: 22 },
+      { name: 'Flytande äggula', g: 50 },
+      { name: 'Bladgelatin', g: 1.7 },
+      { name: 'Salt', g: 1 },
+      { name: 'Earl Grey-te (löst, infuseras)', g: 9, excludeFromBase: true }
+    ],
+    mognad: '12h',
+    steps: [
+      'Gelatin i kallt vatten 10 min. Krama ur.',
+      'Värm grädde+mjölk till strax under kokpunkten. Dra av plattan, tillsätt teet, låt dra 8–10 min (inte längre — bergamotten blir besk). Sila bort teet.',
+      'Vispa skummjölkspulver i den varma teinfusionen (sila igen om det klumpar).',
+      'Vispa flytande äggula + strösocker + dextros + salt slätt. Tempera med lite varm bas, rör tillbaka.',
+      'Värm under omrörning till <strong>83°C</strong>.',
+      'Av plattan → smält gelatin i. Sila → isbad → mogna <strong>12h</strong>.',
+      'Wilfa 30–35 min. Frys 4h.'
+    ],
+    note: 'Bergamotten i Earl Grey ger en parfymerad citruston mot den krämiga basen. Dra INTE teet för länge (besk garvsyra). Löst te är bättre än påsar — mer arom.'
+  },
+  matcha: {
+    label: 'Matcha',
+    base: 684,
+    items: [
+      { name: 'Grädde 40%', g: 210 },
+      { name: 'Mjölk 3%', g: 278 },
+      { name: 'Skummjölkspulver', g: 30 },
+      { name: 'Strösocker', g: 82 },
+      { name: 'Atomiserad dextros', g: 22 },
+      { name: 'Flytande äggula', g: 50 },
+      { name: 'Bladgelatin', g: 1.7 },
+      { name: 'Matcha (ceremoniell)', g: 10 },
+      { name: 'Salt', g: 0.5 }
+    ],
+    mognad: '12h',
+    steps: [
+      'Gelatin i kallt vatten 10 min. Krama ur.',
+      'Vispa matchan slätt med en skvätt av mjölken (eller sikta + vispa) till en klumpfri pasta — annars blir det gryn.',
+      'Vispa skummjölkspulver kallt i resten av grädde+mjölk. Tillsätt matcha-pastan.',
+      'Vispa flytande äggula + strösocker + dextros + salt slätt.',
+      'Rör ner i basen. Värm under omrörning till <strong>83°C</strong>. Koka INTE — matcha blir besk vid för hög värme.',
+      'Av plattan → smält gelatin i. Sila → isbad → mogna <strong>12h</strong>.',
+      'Wilfa 30–35 min. Frys 4h.'
+    ],
+    note: 'Använd ceremoniell matcha (inte kulinarisk bakmatcha) för ren färg och mindre beska. 10g ger kraftig grön smak; sänk till 7g om du vill ha mildare. Sockret något högt för att balansera matchans bitterhet.'
+  },
+  romrussin: {
+    label: 'Rom & russin',
+    base: 693,
+    items: [
+      { name: 'Grädde 40%', g: 212 },
+      { name: 'Mjölk 3%', g: 278 },
+      { name: 'Skummjölkspulver', g: 30 },
+      { name: 'Strösocker', g: 80 },
+      { name: 'Atomiserad dextros', g: 22 },
+      { name: 'Flytande äggula', g: 50 },
+      { name: 'Bladgelatin', g: 1.7 },
+      { name: 'Salt', g: 1 },
+      { name: 'Mörk rom', g: 18 },
+      { name: 'Rom-russin (sista 2 min)', g: 55, excludeFromBase: true }
+    ],
+    mognad: '12h + russin blötläggs dagen innan',
+    steps: [
+      'Dagen innan: blötlägg 55g russin i 3–4 msk mörk rom så de sväller. Spara.',
+      'Gelatin i kallt vatten 10 min. Krama ur.',
+      'Vispa skummjölkspulver kallt i grädde+mjölk i kastrull.',
+      'Vispa flytande äggula + strösocker + dextros + salt slätt.',
+      'Rör ner i basen. Värm under omrörning till <strong>83°C</strong>.',
+      'Av plattan → smält gelatin i. Rör i de 18g rom (efter värmen, så aromen behålls). Sila → isbad → mogna <strong>12h</strong>.',
+      'Wilfa 30–35 min. <strong>Sista 2 min:</strong> häll i de avrunna rom-russinen via locköppningen. Frys 4h.'
+    ],
+    note: 'Alkohol sänker fryspunkten — håll romen runt 18g + russinens skvätt, annars fryser glassen aldrig fast. Mörk rom ger mest karaktär. Russinen hålls utanför bas-balansen (de är inblandning, inte churn-bas).'
   }
 };
 

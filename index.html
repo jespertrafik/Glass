@@ -910,7 +910,7 @@ $('volPlus').addEventListener('click', () => {
   updatePresets();
   render();
 });
-document.querySelectorAll('.preset-btn').forEach(btn => {
+document.querySelectorAll('#volPresets .preset-btn').forEach(btn => {
   btn.addEventListener('click', () => {
     vol.value = btn.dataset.vol;
     updatePresets();
@@ -919,7 +919,7 @@ document.querySelectorAll('.preset-btn').forEach(btn => {
 });
 function updatePresets() {
   const v = parseInt(vol.value);
-  document.querySelectorAll('.preset-btn').forEach(b => {
+  document.querySelectorAll('#volPresets .preset-btn').forEach(b => {
     b.classList.toggle('active', parseInt(b.dataset.vol) === v);
   });
 }

@@ -25,7 +25,7 @@ DB = {
     'Mörk choklad 70%':                            {'fat': 0.40, 'sugars': {'sucrose': 0.30}},
     'Kakao (holländsk)':                           {'fat': 0.22},
     '+ Bär-koncentrat (kallt)':                    {'sugars': {'fructose': 0.18}},
-    'Passionsfruktspuré (reducerad, silad)':       {'sugars': {'fructose': 0.22}},
+    'Passionsfruktspuré (reducerad, silad)':       {'sugars': {'fructose': 0.475}},  # 40g hårt koncentrat (~19g socker)
     'Reducerad kokosmjölk (från ~500g)':           {'fat': 0.40, 'msnf': 0.04},
     'Rostad kokosflakes (valfritt, sista 2 min)':  {'fat': 0.65},
     'Rostad vit choklad':                          {'fat': 0.32, 'sugars': {'sucrose': 0.55}},
@@ -88,9 +88,9 @@ RECIPES = {
         {'name': '+ Bär-koncentrat (kallt)', 'g': 235},
     ]),
     'passion': (571, [
-        {'name': 'Grädde 40%', 'g': 137.5}, {'name': 'Mjölk 3%', 'g': 112.5},
+        {'name': 'Grädde 40%', 'g': 137.5}, {'name': 'Mjölk 3%', 'g': 197.5},
         {'name': 'Skummjölkspulver', 'g': 20}, {'name': 'Sötad kondenserad mjölk', 'g': 60},
-        {'name': 'Passionsfruktspuré (reducerad, silad)', 'g': 125}, {'name': 'Strösocker', 'g': 20},
+        {'name': 'Passionsfruktspuré (reducerad, silad)', 'g': 40}, {'name': 'Strösocker', 'g': 20},
         {'name': 'Atomiserad dextros', 'g': 14}, {'name': 'Flytande äggula', 'g': 60},
         {'name': 'Bladgelatin', 'g': 1.7},
     ]),

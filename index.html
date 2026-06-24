@@ -545,7 +545,7 @@ const INGREDIENT_DB = {
   'Mörk choklad 70%':                                    { fat: 0.40, sugars: { sucrose: 0.30 } },
   'Kakao (holländsk)':                                   { fat: 0.22 },
   '+ Bär-koncentrat (kallt)':                            { sugars: { fructose: 0.18 } },
-  'Passionsfruktspuré (reducerad, silad)':               { sugars: { fructose: 0.22 } },  // 125g från ~250g pulp (dubblad koncentration)
+  'Passionsfruktspuré (reducerad, silad)':               { sugars: { fructose: 0.475 } },  // 40g hårt nedkokt koncentrat (1 paket → ~164g saft → 40g), ~19g socker. Estimat på fruktens sockerhalt (~11–12%).
   'Reducerad kokosmjölk (från ~500g)':                   { fat: 0.40, msnf: 0.04 },
   'Rostad kokosflakes (valfritt, sista 2 min)':          { fat: 0.65 },
   'Rostad vit choklad':                                  { fat: 0.32, sugars: { sucrose: 0.55 } },  // vit choklad ~32% kakaosmör + 55% socker
@@ -715,10 +715,10 @@ const RECIPES = {
     pacTarget: 'fruit',
     items: [
       { name: 'Grädde 40%', g: 137.5 },
-      { name: 'Mjölk 3%', g: 112.5 },
+      { name: 'Mjölk 3%', g: 197.5 },
       { name: 'Skummjölkspulver', g: 20 },
       { name: 'Sötad kondenserad mjölk', g: 60 },
-      { name: 'Passionsfruktspuré (reducerad, silad)', g: 125 },
+      { name: 'Passionsfruktspuré (reducerad, silad)', g: 40 },
       { name: 'Strösocker', g: 20 },
       { name: 'Atomiserad dextros', g: 14 },
       { name: 'Flytande äggula', g: 60 },
@@ -726,7 +726,7 @@ const RECIPES = {
     ],
     mognad: '12h',
     steps: [
-      '<strong>Förbered passion (dagen innan eller minst 4h innan):</strong> Tina <strong>250g</strong> fryst passionsfrukt. Koka upp, <strong>sila bort kärnorna</strong> (de ger grynig textur i glass). Reducera den silade puré:n till <strong>125g</strong> koncentrerad smak. <strong>Kyl helt</strong> — passion får ALDRIG värmas tillsammans med mjölken (citronsyran curdlar proteinerna vid 60°C+).',
+      '<strong>Förbered passion (dagen innan eller minst 4h innan):</strong> Tina <strong>1 paket (~235g)</strong> fryst passionsfrukt. Koka upp, <strong>sila bort kärnorna</strong> (de ger grynig textur i glass) → ~165g saft. Reducera den silade saften till <strong>40g</strong> hårt koncentrat (djup, intensiv smak — allt socker och smak sitter kvar, bara vatten kokas bort). <strong>Kyl helt</strong> — passion får ALDRIG värmas tillsammans med mjölken (citronsyran curdlar proteinerna vid 60°C+).',
       'Gelatin i kallt vatten 10 min. Krama ur.',
       'Vispa skummjölkspulver kallt i grädde+mjölk i kastrull (annars klumpar).',
       'Vispa flytande äggula + strösocker + dextros slätt i bunke.',

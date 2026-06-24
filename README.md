@@ -15,7 +15,7 @@ Det här är **inte gelato** (fett 4–9%). Det är **premium custard-glass** i 
 | **Vanilj** | 698 g | standard | Klassisk crème anglaise, vaniljextrakt eller -pulver. Mild profil (salt 0,7 g, dämpad sötma) |
 | **Choklad** | 706 g | standard | Dubbel chokladkälla (70% choklad + holländsk kakao), 24h mognad |
 | **Jordgubb** | 711 g | frukt-PAC | Bär-koncentrat-teknik (390→235 g), kall inblandning |
-| **Passion** | 571 g | frukt-PAC | Reducerad puré 125 g (kall inblandning) + sötad kondenserad mjölk för tät, len "wow"-kropp (MSNF-lyft) |
+| **Passion** | 571 g | frukt-PAC | Hårt reducerat koncentrat 40 g (1 paket, kall inblandning) + sötad kondenserad mjölk för tät, len "wow"-kropp |
 | **Kokos** | 608 g | rich-fat | Reducerad kokosmjölk 500→180 g, valfri rostad kokos |
 | **Kaffe** | 715 g | standard | Mjölk-kaffe-infusion (filtreras), hög äggula ~15% italiensk caffè-stil |
 | **Salt lakrits** | 691 g | standard | Rå lakritspulver + flingsalt |

@@ -534,6 +534,7 @@ const INGREDIENT_DB = {
   'Mjölk 3%':                                            { fat: 0.03, msnf: 0.088, sugars: { lactose: 0.046 } },
   'Kaffemjölk (mjölk 3% + infusionerat kaffe)':          { fat: 0.03, msnf: 0.088, sugars: { lactose: 0.046 } },
   'Skummjölkspulver':                                    { fat: 0,    msnf: 0.96,  sugars: { lactose: 0.52  } },
+  'Sötad kondenserad mjölk':                             { fat: 0.08, msnf: 0.21,  sugars: { sucrose: 0.45 } },  // ~45% socker + ~21% MSNF + ~8% fett + ~26% vatten
   'Strösocker':                                          { sugars: { sucrose: 1.0 } },
   'Strösocker (i basen)':                                { sugars: { sucrose: 1.0 } },
   'Atomiserad dextros':                                  { sugars: { dextrose: 1.0 } },        // PAC 190, POD 70 — höjer antifrys utan extra sötma
@@ -707,14 +708,15 @@ const RECIPES = {
   },
   passion: {
     label: 'Passion',
-    base: 539,
+    base: 571,
     pacTarget: 'fruit',
     items: [
       { name: 'Grädde 40%', g: 137.5 },
       { name: 'Mjölk 3%', g: 112.5 },
       { name: 'Skummjölkspulver', g: 20 },
+      { name: 'Sötad kondenserad mjölk', g: 60 },
       { name: 'Passionsfruktspuré (reducerad, silad)', g: 125 },
-      { name: 'Strösocker', g: 48 },
+      { name: 'Strösocker', g: 20 },
       { name: 'Atomiserad dextros', g: 14 },
       { name: 'Flytande äggula', g: 60 },
       { name: 'Bladgelatin', g: 1.7 }
@@ -725,7 +727,7 @@ const RECIPES = {
       'Gelatin i kallt vatten 10 min. Krama ur.',
       'Vispa skummjölkspulver kallt i grädde+mjölk i kastrull (annars klumpar).',
       'Vispa flytande äggula + strösocker + dextros slätt i bunke.',
-      'Rör ner ägg-blandningen i den kalla gräddmjölken (kallt mot kallt — ingen tempering behövs). Värm under omrörning till <strong>83°C</strong>.',
+      'Rör ner ägg-blandningen <strong>+ k-mjölken</strong> i den kalla gräddmjölken (kallt mot kallt — ingen tempering behövs). Värm under omrörning till <strong>83°C</strong> — <strong>rör botten</strong> så k-mjölken inte bränner fast.',
       'Av plattan → smält gelatin i. Sila → isbad → kyl <strong>12h</strong>.',
       'Strax före churning: <strong>rör ner KALL passion-puré i KALL crème-bas</strong>. Smaka av.',
       'Wilfa 30–35 min. Frys 4h.'

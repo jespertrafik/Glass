@@ -7,6 +7,7 @@ DB = {
  'Mjolk 3%': dict(fat=.03, msnf=.088),
  'Kaffemjolk': dict(fat=.03, msnf=.088),
  'SMP': dict(fat=0, msnf=.96),
+ 'Kondmjolk': dict(fat=.08, msnf=.21, sugars={'sucrose':.45}),  # sotad kondenserad mjolk
  'Strosocker': dict(sugars={'sucrose':1.0}),
  'Dextros': dict(sugars={'dextrose':1.0}),
  'Honung': dict(sugars={'fructose':.38,'glucose_de42':.31}),
@@ -65,9 +66,9 @@ show('CHOKLAD', [('Gradde 36%',150),('Mjolk 3%',285),('SMP',20),('Choklad70',90)
 show('JORDGUBB', [('Gradde 36%',155),('Mjolk 3%',170),('SMP',30),('Strosocker',45),
     ('Dextros',22),('Aggula',30),('Gelatin',1.7),('Barkonc',235)], 711, fruit=True)
 
-# Passion: ersatt 12.5g glukossirap. fruit-target. Sankt socker for POD ur warn.
-show('PASSION', [('Gradde 36%',137.5),('Mjolk 3%',112.5),('SMP',20),('Passion',125),
-    ('Strosocker',48),('Dextros',14),('Aggula',60),('Gelatin',1.7)], 539, fruit=True)
+# Passion v2: +60g sotad kondenserad mjolk (wow/MSNF), strosocker 48->20 (socker netto oforandrat). fruit-target.
+show('PASSION', [('Gradde 36%',137.5),('Mjolk 3%',112.5),('SMP',20),('Kondmjolk',60),('Passion',125),
+    ('Strosocker',20),('Dextros',14),('Aggula',60),('Gelatin',1.7)], 571, fruit=True)
 
 # Kokos: dextros-fix pa riktigt nu. Lyfter PAC ur BAD.
 show('KOKOS', [('Gradde 36%',137.5),('Mjolk 3%',112.5),('SMP',15),('Kokoskonc',180),

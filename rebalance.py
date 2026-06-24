@@ -56,7 +56,7 @@ def show(label, items, total, fruit=False):
 # ---- KANDIDATER: socker + dextros, ingen glukossirap, ingen honung ----
 # Vanilj: ersatt 30g glukossirap. Behall PAC ~21, POD ~16.
 show('VANILJ', [('Gradde 36%',215),('Mjolk 3%',275),('SMP',30),
-    ('Strosocker',80),('Dextros',22),('Aggula',50),('Gelatin',1.7)], 698)
+    ('Strosocker',76),('Dextros',24),('Aggula',50),('Gelatin',1.7)], 698)
 
 # Choklad: ta bort 20g honung + 30g glukossirap, ersatt med sucrose+dextros
 show('CHOKLAD', [('Gradde 36%',150),('Mjolk 3%',285),('SMP',20),('Choklad70',90),

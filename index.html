@@ -625,7 +625,7 @@ const RECIPES = {
       { name: 'Atomiserad dextros', g: 22 },
       { name: 'Flytande äggula', g: 50 },
       { name: 'Bladgelatin', g: 1.7 },
-      { name: 'Vaniljextrakt (eller 2g vaniljpulver)', g: 10 },
+      { name: 'Vaniljextrakt', g: 10, alt: { g: 2, label: 'vaniljpulver' } },
       { name: 'Salt', g: 1 }
     ],
     mognad: '12h',
@@ -1125,7 +1125,9 @@ function render() {
       const blad = Math.round(it.g * factor / 1.7 * 2) / 2; // halvbladsteg
       html += '<div class="ingr"><div class="ingr-name">' + it.name + '</div><div class="ingr-amt">' + blad + '<span>blad (' + amt + 'g)</span></div></div>';
     } else {
-      html += '<div class="ingr"><div class="ingr-name">' + it.name + '</div><div class="ingr-amt">' + amt + '<span>' + unit + '</span></div></div>';
+      let nameHtml = it.name;
+      if (it.alt) nameHtml += ' <span style="opacity:0.6;">(eller ' + roundG(it.alt.g * factor) + 'g ' + it.alt.label + ')</span>';
+      html += '<div class="ingr"><div class="ingr-name">' + nameHtml + '</div><div class="ingr-amt">' + amt + '<span>' + unit + '</span></div></div>';
     }
   });
 

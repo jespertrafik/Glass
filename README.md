@@ -58,7 +58,7 @@ Rich-variant (kokos): honest labeling — fett-rik glass är medvetet val, tål 
 - **Flytande äggula** (pastöriserad) — säker vid 83°C
 - **Strösocker + atomiserad dextros** (PAC 190, POD 70) — höjer antifrys utan extra sötma. Glukossirap och honung är utfasade ur alla recept (finns kvar i ingrediens-DB:n bara för bakåtkompatibilitet)
 - **Skummjölkspulver** — MSNF-höjning till 8–12%
-- **Sötad kondenserad mjölk** (passion) — ~45% socker + ~21% MSNF + ~8% fett. Lyfter MSNF för tät, len kropp; strösocker sänks i gengäld så sötman hålls konstant
+- **Sötad kondenserad mjölk** (alla recept, 30–60 g) — ~45% socker + ~21% MSNF + ~8% fett. Lyfter MSNF för tät, len "wow"-kropp; strösocker sänks i gengäld så sötman hålls konstant
 - **Bladgelatin** — 1 blad (1.7 g) per ~700 g batch (~2.4 g/kg)
 - **Mognad** 12h standard, 24h på choklad
 

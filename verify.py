@@ -64,26 +64,27 @@ def compute(items, totalG):
         'gel':  gelG / totalG * 1000,
     }
 
-# RECIPES — speglar index.html. (bas, items)
+# RECIPES — speglar index.html. (bas, items). Alla recept har sötad kondenserad mjölk (wow-kropp).
 RECIPES = {
-    'vanilj': (698, [
+    'vanilj': (725, [
         {'name': 'Grädde 40%', 'g': 215}, {'name': 'Mjölk 3%', 'g': 275},
-        {'name': 'Skummjölkspulver', 'g': 30}, {'name': 'Strösocker', 'g': 76},
-        {'name': 'Atomiserad dextros', 'g': 24}, {'name': 'Flytande äggula', 'g': 50},
-        {'name': 'Bladgelatin', 'g': 1.7}, {'name': 'Vaniljextrakt', 'g': 10}, {'name': 'Salt', 'g': 0.7},
+        {'name': 'Skummjölkspulver', 'g': 30}, {'name': 'Sötad kondenserad mjölk', 'g': 40},
+        {'name': 'Strösocker', 'g': 63}, {'name': 'Atomiserad dextros', 'g': 24},
+        {'name': 'Flytande äggula', 'g': 50}, {'name': 'Bladgelatin', 'g': 1.7},
+        {'name': 'Vaniljextrakt', 'g': 10}, {'name': 'Salt', 'g': 0.7},
     ]),
-    'choklad': (706, [
+    'choklad': (736, [
         {'name': 'Grädde 40%', 'g': 150}, {'name': 'Mjölk 3%', 'g': 285},
-        {'name': 'Skummjölkspulver', 'g': 20}, {'name': 'Mörk choklad 70%', 'g': 90},
-        {'name': 'Kakao (holländsk)', 'g': 20}, {'name': 'Strösocker', 'g': 52},
-        {'name': 'Atomiserad dextros', 'g': 30}, {'name': 'Flytande äggula', 'g': 40},
-        {'name': 'Bladgelatin', 'g': 1.7}, {'name': 'Salt', 'g': 1},
+        {'name': 'Skummjölkspulver', 'g': 20}, {'name': 'Sötad kondenserad mjölk', 'g': 55},
+        {'name': 'Mörk choklad 70%', 'g': 90}, {'name': 'Kakao (holländsk)', 'g': 20},
+        {'name': 'Strösocker', 'g': 27}, {'name': 'Atomiserad dextros', 'g': 30},
+        {'name': 'Flytande äggula', 'g': 40}, {'name': 'Bladgelatin', 'g': 1.7}, {'name': 'Salt', 'g': 1},
     ]),
-    'jordgubb': (711, [
+    'jordgubb': (739, [
         {'name': 'Grädde 40%', 'g': 155}, {'name': 'Mjölk 3%', 'g': 170},
-        {'name': 'Skummjölkspulver', 'g': 30}, {'name': 'Strösocker (i basen)', 'g': 45},
-        {'name': 'Atomiserad dextros', 'g': 22}, {'name': 'Flytande äggula', 'g': 30},
-        {'name': 'Bladgelatin', 'g': 1.7}, {'name': 'Salt', 'g': 1},
+        {'name': 'Skummjölkspulver', 'g': 30}, {'name': 'Sötad kondenserad mjölk', 'g': 50},
+        {'name': 'Strösocker (i basen)', 'g': 23}, {'name': 'Atomiserad dextros', 'g': 22},
+        {'name': 'Flytande äggula', 'g': 30}, {'name': 'Bladgelatin', 'g': 1.7}, {'name': 'Salt', 'g': 1},
         {'name': '+ Bär-koncentrat (kallt)', 'g': 235},
     ]),
     'passion': (571, [
@@ -93,78 +94,84 @@ RECIPES = {
         {'name': 'Atomiserad dextros', 'g': 14}, {'name': 'Flytande äggula', 'g': 60},
         {'name': 'Bladgelatin', 'g': 1.7},
     ]),
-    'kokos': (608, [
+    'kokos': (630, [
         {'name': 'Grädde 40%', 'g': 137.5}, {'name': 'Mjölk 3%', 'g': 112.5},
-        {'name': 'Skummjölkspulver', 'g': 15}, {'name': 'Reducerad kokosmjölk (från ~500g)', 'g': 180},
-        {'name': 'Strösocker', 'g': 70}, {'name': 'Atomiserad dextros', 'g': 38},
-        {'name': 'Flytande äggula', 'g': 60}, {'name': 'Bladgelatin', 'g': 1.7},
-        {'name': 'Rostad kokosflakes (valfritt, sista 2 min)', 'g': 25},
+        {'name': 'Skummjölkspulver', 'g': 15}, {'name': 'Sötad kondenserad mjölk', 'g': 40},
+        {'name': 'Reducerad kokosmjölk (från ~500g)', 'g': 180}, {'name': 'Strösocker', 'g': 52},
+        {'name': 'Atomiserad dextros', 'g': 38}, {'name': 'Flytande äggula', 'g': 60},
+        {'name': 'Bladgelatin', 'g': 1.7}, {'name': 'Rostad kokosflakes (valfritt, sista 2 min)', 'g': 25},
     ]),
-    'kaffe': (715, [
+    'kaffe': (740, [
         {'name': 'Grädde 40%', 'g': 251}, {'name': 'Kaffemjölk (mjölk 3% + infusionerat kaffe)', 'g': 205},
-        {'name': 'Skummjölkspulver', 'g': 15}, {'name': 'Strösocker', 'g': 95},
-        {'name': 'Flytande äggula', 'g': 110}, {'name': 'Atomiserad dextros', 'g': 23},
-        {'name': 'Bladgelatin', 'g': 1.7},
+        {'name': 'Skummjölkspulver', 'g': 15}, {'name': 'Sötad kondenserad mjölk', 'g': 45},
+        {'name': 'Strösocker', 'g': 75}, {'name': 'Flytande äggula', 'g': 110},
+        {'name': 'Atomiserad dextros', 'g': 23}, {'name': 'Bladgelatin', 'g': 1.7},
         {'name': 'Mald kaffe (för infusion, filtreras bort)', 'g': 32, 'excludeFromBase': True},
     ]),
-    'lakrits': (691, [
+    'lakrits': (710, [
         {'name': 'Grädde 40%', 'g': 210}, {'name': 'Mjölk 3%', 'g': 280},
-        {'name': 'Skummjölkspulver', 'g': 30}, {'name': 'Strösocker', 'g': 78},
-        {'name': 'Atomiserad dextros', 'g': 24}, {'name': 'Flytande äggula', 'g': 50},
-        {'name': 'Bladgelatin', 'g': 1.7}, {'name': 'Lakritspulver (rå)', 'g': 14}, {'name': 'Flingsalt', 'g': 3},
+        {'name': 'Skummjölkspulver', 'g': 30}, {'name': 'Sötad kondenserad mjölk', 'g': 35},
+        {'name': 'Strösocker', 'g': 62}, {'name': 'Atomiserad dextros', 'g': 24},
+        {'name': 'Flytande äggula', 'g': 50}, {'name': 'Bladgelatin', 'g': 1.7},
+        {'name': 'Lakritspulver (rå)', 'g': 14}, {'name': 'Flingsalt', 'g': 3},
     ]),
-    'vitchoklad': (647, [
+    'vitchoklad': (669, [
         {'name': 'Grädde 40%', 'g': 150}, {'name': 'Mjölk 3%', 'g': 293},
-        {'name': 'Skummjölkspulver', 'g': 25}, {'name': 'Rostad vit choklad', 'g': 70},
-        {'name': 'Strösocker', 'g': 40}, {'name': 'Atomiserad dextros', 'g': 20},
-        {'name': 'Flytande äggula', 'g': 45}, {'name': 'Bladgelatin', 'g': 1.7},
-        {'name': 'Kardemumma (mald)', 'g': 2}, {'name': 'Salt', 'g': 0.5},
+        {'name': 'Skummjölkspulver', 'g': 25}, {'name': 'Sötad kondenserad mjölk', 'g': 40},
+        {'name': 'Rostad vit choklad', 'g': 70}, {'name': 'Strösocker', 'g': 22},
+        {'name': 'Atomiserad dextros', 'g': 20}, {'name': 'Flytande äggula', 'g': 45},
+        {'name': 'Bladgelatin', 'g': 1.7}, {'name': 'Kardemumma (mald)', 'g': 2}, {'name': 'Salt', 'g': 0.5},
     ]),
-    'pistage': (686, [
+    'pistage': (705, [
         {'name': 'Grädde 40%', 'g': 165}, {'name': 'Mjölk 3%', 'g': 285},
-        {'name': 'Skummjölkspulver', 'g': 30}, {'name': 'Pistagepasta (100%)', 'g': 55},
-        {'name': 'Strösocker', 'g': 78}, {'name': 'Atomiserad dextros', 'g': 22},
-        {'name': 'Flytande äggula', 'g': 48}, {'name': 'Bladgelatin', 'g': 1.7}, {'name': 'Salt', 'g': 1},
-    ]),
-    'earlgrey': (680, [
-        {'name': 'Grädde 40%', 'g': 215}, {'name': 'Mjölk 3%', 'g': 280},
-        {'name': 'Skummjölkspulver', 'g': 30}, {'name': 'Strösocker', 'g': 80},
-        {'name': 'Atomiserad dextros', 'g': 22}, {'name': 'Flytande äggula', 'g': 50},
+        {'name': 'Skummjölkspulver', 'g': 30}, {'name': 'Sötad kondenserad mjölk', 'g': 35},
+        {'name': 'Pistagepasta (100%)', 'g': 55}, {'name': 'Strösocker', 'g': 62},
+        {'name': 'Atomiserad dextros', 'g': 22}, {'name': 'Flytande äggula', 'g': 48},
         {'name': 'Bladgelatin', 'g': 1.7}, {'name': 'Salt', 'g': 1},
+    ]),
+    'earlgrey': (696, [
+        {'name': 'Grädde 40%', 'g': 215}, {'name': 'Mjölk 3%', 'g': 280},
+        {'name': 'Skummjölkspulver', 'g': 30}, {'name': 'Sötad kondenserad mjölk', 'g': 30},
+        {'name': 'Strösocker', 'g': 66}, {'name': 'Atomiserad dextros', 'g': 22},
+        {'name': 'Flytande äggula', 'g': 50}, {'name': 'Bladgelatin', 'g': 1.7}, {'name': 'Salt', 'g': 1},
         {'name': 'Earl Grey-te (löst, infuseras)', 'g': 9, 'excludeFromBase': True},
     ]),
-    'matcha': (684, [
+    'matcha': (700, [
         {'name': 'Grädde 40%', 'g': 210}, {'name': 'Mjölk 3%', 'g': 278},
-        {'name': 'Skummjölkspulver', 'g': 30}, {'name': 'Strösocker', 'g': 82},
-        {'name': 'Atomiserad dextros', 'g': 22}, {'name': 'Flytande äggula', 'g': 50},
-        {'name': 'Bladgelatin', 'g': 1.7}, {'name': 'Matcha (ceremoniell)', 'g': 10}, {'name': 'Salt', 'g': 0.5},
+        {'name': 'Skummjölkspulver', 'g': 30}, {'name': 'Sötad kondenserad mjölk', 'g': 30},
+        {'name': 'Strösocker', 'g': 68}, {'name': 'Atomiserad dextros', 'g': 22},
+        {'name': 'Flytande äggula', 'g': 50}, {'name': 'Bladgelatin', 'g': 1.7},
+        {'name': 'Matcha (ceremoniell)', 'g': 10}, {'name': 'Salt', 'g': 0.5},
     ]),
-    'romrussin': (693, [
+    'romrussin': (712, [
         {'name': 'Grädde 40%', 'g': 212}, {'name': 'Mjölk 3%', 'g': 278},
-        {'name': 'Skummjölkspulver', 'g': 30}, {'name': 'Strösocker', 'g': 80},
-        {'name': 'Atomiserad dextros', 'g': 22}, {'name': 'Flytande äggula', 'g': 50},
-        {'name': 'Bladgelatin', 'g': 1.7}, {'name': 'Salt', 'g': 1}, {'name': 'Mörk rom', 'g': 18},
-        {'name': 'Rom-russin (sista 2 min)', 'g': 55, 'excludeFromBase': True},
+        {'name': 'Skummjölkspulver', 'g': 30}, {'name': 'Sötad kondenserad mjölk', 'g': 35},
+        {'name': 'Strösocker', 'g': 64}, {'name': 'Atomiserad dextros', 'g': 22},
+        {'name': 'Flytande äggula', 'g': 50}, {'name': 'Bladgelatin', 'g': 1.7}, {'name': 'Salt', 'g': 1},
+        {'name': 'Mörk rom', 'g': 18}, {'name': 'Rom-russin (sista 2 min)', 'g': 55, 'excludeFromBase': True},
     ]),
-    'saffran': (675, [
+    'saffran': (694, [
         {'name': 'Grädde 40%', 'g': 215}, {'name': 'Mjölk 3%', 'g': 275},
-        {'name': 'Skummjölkspulver', 'g': 30}, {'name': 'Strösocker', 'g': 80},
-        {'name': 'Atomiserad dextros', 'g': 22}, {'name': 'Flytande äggula', 'g': 50},
-        {'name': 'Bladgelatin', 'g': 1.7}, {'name': 'Saffran', 'g': 0.5}, {'name': 'Salt', 'g': 1},
+        {'name': 'Skummjölkspulver', 'g': 30}, {'name': 'Sötad kondenserad mjölk', 'g': 35},
+        {'name': 'Strösocker', 'g': 64}, {'name': 'Atomiserad dextros', 'g': 22},
+        {'name': 'Flytande äggula', 'g': 50}, {'name': 'Bladgelatin', 'g': 1.7},
+        {'name': 'Saffran', 'g': 0.5}, {'name': 'Salt', 'g': 1},
     ]),
-    'applekanel': (674, [
+    'applekanel': (690, [
         {'name': 'Grädde 40%', 'g': 180}, {'name': 'Mjölk 3%', 'g': 195},
-        {'name': 'Skummjölkspulver', 'g': 32}, {'name': 'Strösocker', 'g': 22},
-        {'name': 'Atomiserad dextros', 'g': 18}, {'name': 'Flytande äggula', 'g': 42},
-        {'name': 'Bladgelatin', 'g': 1.7}, {'name': 'Kanel (mald)', 'g': 3}, {'name': 'Salt', 'g': 0.5},
+        {'name': 'Skummjölkspulver', 'g': 32}, {'name': 'Sötad kondenserad mjölk', 'g': 30},
+        {'name': 'Strösocker', 'g': 8}, {'name': 'Atomiserad dextros', 'g': 18},
+        {'name': 'Flytande äggula', 'g': 42}, {'name': 'Bladgelatin', 'g': 1.7},
+        {'name': 'Kanel (mald)', 'g': 3}, {'name': 'Salt', 'g': 0.5},
         {'name': '+ Äppelkompott (kall)', 'g': 180},
     ]),
-    'citronlakrits': (695, [
+    'citronlakrits': (714, [
         {'name': 'Grädde 40%', 'g': 200}, {'name': 'Mjölk 3%', 'g': 250},
-        {'name': 'Skummjölkspulver', 'g': 30}, {'name': 'Strösocker', 'g': 90},
-        {'name': 'Atomiserad dextros', 'g': 22}, {'name': 'Flytande äggula', 'g': 50},
-        {'name': 'Bladgelatin', 'g': 1.7}, {'name': 'Citronskal (rivet, 3 citroner)', 'g': 6},
-        {'name': 'Lakritspulver (rå)', 'g': 10}, {'name': 'Citronsaft (kall, sista)', 'g': 35}, {'name': 'Salt', 'g': 0.5},
+        {'name': 'Skummjölkspulver', 'g': 30}, {'name': 'Sötad kondenserad mjölk', 'g': 35},
+        {'name': 'Strösocker', 'g': 74}, {'name': 'Atomiserad dextros', 'g': 22},
+        {'name': 'Flytande äggula', 'g': 50}, {'name': 'Bladgelatin', 'g': 1.7},
+        {'name': 'Citronskal (rivet, 3 citroner)', 'g': 6}, {'name': 'Lakritspulver (rå)', 'g': 10},
+        {'name': 'Citronsaft (kall, sista)', 'g': 35}, {'name': 'Salt', 'g': 0.5},
     ]),
 }
 

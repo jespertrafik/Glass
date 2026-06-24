@@ -12,10 +12,10 @@ Det här är **inte gelato** (fett 4–9%). Det är **premium custard-glass** i 
 
 | Smak | Bas | Target | Notering |
 |---|---|---|---|
-| **Vanilj** | 698 g | standard | Klassisk crème anglaise, vaniljextrakt eller -pulver |
+| **Vanilj** | 698 g | standard | Klassisk crème anglaise, vaniljextrakt eller -pulver. Mild profil (salt 0,7 g, dämpad sötma) |
 | **Choklad** | 706 g | standard | Dubbel chokladkälla (70% choklad + holländsk kakao), 24h mognad |
 | **Jordgubb** | 711 g | frukt-PAC | Bär-koncentrat-teknik (390→235 g), kall inblandning |
-| **Passion** | 539 g | frukt-PAC | Reducerad puré 125 g (från ~400 g fryst), kall inblandning efter mognad |
+| **Passion** | 571 g | frukt-PAC | Reducerad puré 125 g (kall inblandning) + sötad kondenserad mjölk för tät, len "wow"-kropp (MSNF-lyft) |
 | **Kokos** | 608 g | rich-fat | Reducerad kokosmjölk 500→180 g, valfri rostad kokos |
 | **Kaffe** | 715 g | standard | Mjölk-kaffe-infusion (filtreras), hög äggula ~15% italiensk caffè-stil |
 | **Salt lakrits** | 691 g | standard | Rå lakritspulver + flingsalt |
@@ -58,6 +58,7 @@ Rich-variant (kokos): honest labeling — fett-rik glass är medvetet val, tål 
 - **Flytande äggula** (pastöriserad) — säker vid 83°C
 - **Strösocker + atomiserad dextros** (PAC 190, POD 70) — höjer antifrys utan extra sötma. Glukossirap och honung är utfasade ur alla recept (finns kvar i ingrediens-DB:n bara för bakåtkompatibilitet)
 - **Skummjölkspulver** — MSNF-höjning till 8–12%
+- **Sötad kondenserad mjölk** (passion) — ~45% socker + ~21% MSNF + ~8% fett. Lyfter MSNF för tät, len kropp; strösocker sänks i gengäld så sötman hålls konstant
 - **Bladgelatin** — 1 blad (1.7 g) per ~700 g batch (~2.4 g/kg)
 - **Mognad** 12h standard, 24h på choklad
 

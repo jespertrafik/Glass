@@ -633,6 +633,20 @@ function computeStats(items, totalG) {
   };
 }
 
+// Ersätter __PLACEHOLDER__-taggar i brödtext med tal skalade mot batch-storleken (r.prepScale),
+// så fasta gram i instruktioner (t.ex. "32g malt kaffe") inte blir fel vid andra bas-storlekar.
+function applyPrepScale(text, r, items, factor) {
+  if (!r.prepScale) return text;
+  const anchorItem = items.find(it => it.name === r.prepScale.anchor);
+  if (!anchorItem) return text;
+  const anchorScaled = anchorItem.g * factor;
+  let out = text;
+  Object.entries(r.prepScale.ratios).forEach(([key, ratio]) => {
+    out = out.replace('__' + key + '__', Math.round(anchorScaled * ratio));
+  });
+  return out;
+}
+
 const RECIPES = {
   vanilj: {
     label: 'Vanilj',
@@ -696,6 +710,10 @@ const RECIPES = {
     label: 'Jordgubb',
     base: 718,
     pacTarget: 'fruit',
+    prepScale: {
+      anchor: '+ Bär-koncentrat (kallt)',
+      ratios: { CONC: 1, SWIRL: 50/235 }
+    },
     concentrate: {
       title: 'Bär-koncentrat (gör först, dagen innan)',
       items: [
@@ -703,7 +721,7 @@ const RECIPES = {
         { name: 'Strösocker', g: 60 },
         { name: 'Citronsaft', g: 12 }
       ],
-      note: 'Macerera 30 min, mosa lätt, koka in till 235 g (volymen halveras, sirapig). Kyl över natt.'
+      note: 'Macerera 30 min, mosa lätt, koka in till __CONC__ g (volymen halveras, sirapig). Kyl över natt.'
     },
     items: [
       { name: 'Grädde 40%', g: 155 },
@@ -719,13 +737,13 @@ const RECIPES = {
     ],
     mognad: '12h + koncentrat dagen innan',
     steps: [
-      '<strong>Dag 1:</strong> Macerera bär + socker + citron 30 min. Mosa lätt. Koka in tills volymen halverats (~235g, sirapig). Kyl över natt.',
+      '<strong>Dag 1:</strong> Macerera bär + socker + citron 30 min. Mosa lätt. Koka in tills volymen halverats (~__CONC__g, sirapig). Kyl över natt.',
       '<strong>Dag 2:</strong> Gelatin i kallt vatten 10 min. Krama ur.',
       'Vispa skummjölkspulver kallt i grädde+mjölk (annars klumpar). Värm till 70°C.',
       'Vispa flytande äggula + socker + dextros + salt. Tempera, tillbaka, <strong>83°C</strong>.',
       'Av plattan → smält gelatin + k-mjölk i, vispa slätt. Sila → isbad → kyl <strong>12h</strong>.',
       'Strax före churning: rör ner kallt bär-koncentrat i den kalla crème-basen. Smaka av.',
-      'Vill du chunks → spara 50g koncentrat och swirl:a via lockets öppning sista 1 min.',
+      'Vill du chunks → spara __SWIRL__g koncentrat och swirl:a via lockets öppning sista 1 min.',
       'Wilfa: 30–35 min. Frys 4h.'
     ]
   },
@@ -789,6 +807,10 @@ const RECIPES = {
   kaffe: {
     label: 'Kaffe',
     base: 691,
+    prepScale: {
+      anchor: 'Kaffemjölk (mjölk 3% + infusionerat kaffe)',
+      ratios: { MILKLOW: 230/205, MILKHIGH: 260/205, COFFEE: 32/205, RESULT: 1 }
+    },
     items: [
       { name: 'Grädde 40%', g: 251 },
       { name: 'Kaffemjölk (mjölk 3% + infusionerat kaffe)', g: 205 },
@@ -802,7 +824,7 @@ const RECIPES = {
     ],
     mognad: '12h',
     steps: [
-      '<strong>Förbered kaffemjölk:</strong> Värm 230–260g mjölk (3%) med 32g malt kaffe (frystorkat funkar också men färskmalet är bättre). Värm till strax under kokpunkten, dra av plattan, låt dra 10–15 min. Filtrera genom kaffefilter. <strong>Mät upp 205g kaffemjölk</strong> — fyll på med mer vanlig mjölk om för lite, eller starta om med mer mjölk om mycket förlorat i kaffegrumset.',
+      '<strong>Förbered kaffemjölk:</strong> Värm __MILKLOW__–__MILKHIGH__g mjölk (3%) med __COFFEE__g malt kaffe (frystorkat funkar också men färskmalet är bättre). Värm till strax under kokpunkten, dra av plattan, låt dra 10–15 min. Filtrera genom kaffefilter. <strong>Mät upp __RESULT__g kaffemjölk</strong> — fyll på med mer vanlig mjölk om för lite, eller starta om med mer mjölk om mycket förlorat i kaffegrumset.',
       'Gelatin i kallt vatten 10 min. Krama ur.',
       'Vispa skummjölkspulver kallt i grädde+kaffemjölken i kastrull (annars klumpar).',
       'Vispa flytande äggula + strösocker + dextros slätt.',
@@ -1143,7 +1165,7 @@ function render() {
       const scaled = it.g * factor;
       html += '<div class="ingr"><div class="ingr-name">' + it.name + '</div><div class="ingr-amt">' + roundG(scaled) + '<span>g</span></div></div>';
     });
-    html += '<div style="font-family:JetBrains Mono,monospace;font-size:10px;color:rgba(250,249,246,0.55);padding:8px 0 4px;line-height:1.5;">' + r.concentrate.note + '</div>';
+    html += '<div style="font-family:JetBrains Mono,monospace;font-size:10px;color:rgba(250,249,246,0.55);padding:8px 0 4px;line-height:1.5;">' + applyPrepScale(r.concentrate.note, r, items, factor) + '</div>';
     html += '<div class="sub-recipe-title">Mejeri-bas (dag 2)</div>';
   }
 
@@ -1196,8 +1218,11 @@ function render() {
   statsHtml += '<br>Mognad <span>' + r.mognad + '</span> · Tempering <span>83°C</span> · Wilfa <span>30–40 min</span>';
   $('stats').innerHTML = statsHtml;
 
-  // Steps
-  $('stepsList').innerHTML = r.steps.map((s, i) =>
+  // Steps — vissa recept nämner fasta gram i brödtexten (t.ex. "32g malt kaffe") som annars inte
+  // skulle skala med batch-storleken. applyPrepScale ersätter __PLACEHOLDER__-taggar med skalade tal.
+  const stepsForRender = r.steps.map(step => applyPrepScale(step, r, items, factor));
+
+  $('stepsList').innerHTML = stepsForRender.map((s, i) =>
     '<li><strong>' + (i+1) + '.</strong> ' + s + '</li>'
   ).join('');
 

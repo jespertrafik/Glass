@@ -66,10 +66,10 @@ def compute(items, totalG):
 
 # RECIPES — speglar index.html. (bas, items). Alla recept har sötad kondenserad mjölk (wow-kropp).
 RECIPES = {
-    'vanilj': (725, [
+    'vanilj': (714, [
         {'name': 'Grädde 40%', 'g': 215}, {'name': 'Mjölk 3%', 'g': 275},
         {'name': 'Skummjölkspulver', 'g': 30}, {'name': 'Sötad kondenserad mjölk', 'g': 40},
-        {'name': 'Strösocker', 'g': 63}, {'name': 'Atomiserad dextros', 'g': 24},
+        {'name': 'Strösocker', 'g': 48}, {'name': 'Atomiserad dextros', 'g': 28},
         {'name': 'Flytande äggula', 'g': 50}, {'name': 'Bladgelatin', 'g': 1.7},
         {'name': 'Vaniljextrakt', 'g': 10}, {'name': 'Salt', 'g': 0.7},
     ]),
@@ -94,10 +94,10 @@ RECIPES = {
         {'name': 'Atomiserad dextros', 'g': 14}, {'name': 'Flytande äggula', 'g': 60},
         {'name': 'Bladgelatin', 'g': 1.7},
     ]),
-    'kokos': (630, [
+    'kokos': (618, [
         {'name': 'Grädde 40%', 'g': 137.5}, {'name': 'Mjölk 3%', 'g': 112.5},
         {'name': 'Skummjölkspulver', 'g': 15}, {'name': 'Sötad kondenserad mjölk', 'g': 40},
-        {'name': 'Reducerad kokosmjölk (från ~500g)', 'g': 180}, {'name': 'Strösocker', 'g': 52},
+        {'name': 'Reducerad kokosmjölk (från ~500g)', 'g': 180}, {'name': 'Strösocker', 'g': 40},
         {'name': 'Atomiserad dextros', 'g': 38}, {'name': 'Flytande äggula', 'g': 60},
         {'name': 'Bladgelatin', 'g': 1.7}, {'name': 'Rostad kokosflakes (valfritt, sista 2 min)', 'g': 25},
     ]),

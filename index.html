@@ -280,7 +280,18 @@
     font-weight: 700;
     text-transform: uppercase;
     letter-spacing: 0.15em;
-    color: var(--ink);
+    color: var(--cream);
+    display: flex;
+    align-items: center;
+    gap: 9px;
+  }
+  .flavor-dot {
+    width: 13px;
+    height: 13px;
+    border-radius: 50%;
+    background: var(--accent);
+    border: 1.5px solid rgba(250,249,246,0.45);
+    flex-shrink: 0;
   }
   .round-btn {
     background: var(--bg-card);
@@ -451,7 +462,7 @@
 
   <div class="recipe">
     <div class="recipe-head">
-      <div class="recipe-title" id="recipeTitle">Recept · Vanilj</div>
+      <div class="recipe-title" id="recipeTitle"><span class="flavor-dot"></span>Recept · Vanilj</div>
       <button class="round-btn" id="roundBtn" type="button">Avrunda</button>
     </div>
     <div id="ingredients"></div>
@@ -572,7 +583,9 @@ const TARGETS = {
   fat:      v => (v >= 9 && v <= 18) ? 'ok' : (v < 6 || v > 24) ? 'bad' : 'warn',  // premium ice cream 12–18% (Häagen-Dazs ~15); 9–18 inkluderar lättare fruktrecept. Gelato vore 4–9.
   fatRich:  v => (v >= 9 && v <= 18) ? 'ok' : v > 30 ? 'bad' : 'warn',  // "rich" — fett-tunga recept (kokos), tål upp till 30 innan bad
   msnf:     v => v < 6 || v > 14 ? 'bad' : (v >= 8 && v <= 12) ? 'ok' : 'warn',
-  gelatin:  v => v > 3.5 ? 'bad' : (v >= 1.5 && v <= 3) ? 'ok' : 'warn'
+  gelatin:  v => v > 3.5 ? 'bad' : (v >= 1.5 && v <= 3) ? 'ok' : 'warn',
+  sweet:    v => (v < 9 || v > 19) ? 'bad' : (v >= 11 && v <= 17) ? 'ok' : 'warn',  // praktisk sötma (sucrose-ekv), Jespers smakmål — se sweetness-calibration
+  kmjolk:   v => v > 12 ? 'warn' : 'ok'   // k-mjölk ska förhöja kroppen, inte dominera smaken
 };
 
 /*
@@ -581,7 +594,7 @@ const TARGETS = {
   från items[] (med g-vikter) och total bas-vikt.
 */
 function computeStats(items, totalG) {
-  let fatG = 0, msnfG = 0, gelatinG = 0;
+  let fatG = 0, msnfG = 0, gelatinG = 0, kmjolkG = 0;
   const sugarG = { sucrose: 0, dextrose: 0, fructose: 0, glucose_de42: 0, lactose: 0 };
 
   items.forEach(it => {
@@ -596,17 +609,22 @@ function computeStats(items, totalG) {
       sugarG[type] = (sugarG[type] || 0) + it.g * frac;
     });
     if (it.name === 'Bladgelatin') gelatinG += it.g;
+    if (it.name === 'Sötad kondenserad mjölk') kmjolkG += it.g;
   });
 
   const addedSugarG = sugarG.sucrose + sugarG.dextrose + sugarG.fructose + sugarG.glucose_de42;
   const totalSugarG = addedSugarG + sugarG.lactose;
   const pacRaw = Object.entries(sugarG).reduce((sum, [t, g]) => sum + g * (PAC_FACTOR[t] || 0), 0);
   const podRaw = Object.entries(sugarG).reduce((sum, [t, g]) => sum + g * (POD_FACTOR[t] || 0), 0);
+  // Praktisk sötma (sucrose-ekv, Jespers smakmetod) — sucrose 1.0 + dextros 0.70. Fruktsocker/laktos räknas INTE (maskeras av syra / smakar knappt sött).
+  const sweetRaw = sugarG.sucrose * 1.0 + sugarG.dextrose * 0.70;
 
   return {
     fat:     fatG / totalG * 100,
     msnf:    msnfG / totalG * 100,
     sugar:   totalSugarG / totalG * 100,
+    sweet:   sweetRaw / totalG * 100,
+    kmjolkPct: kmjolkG / totalG * 100,
     // TS = fett + MSNF + tillsatta sockerarter (laktos är redan i MSNF) + ~1% övrigt
     ts:      (fatG + msnfG + addedSugarG) / totalG * 100 + 1,
     pac:     pacRaw / totalG,
@@ -618,14 +636,14 @@ function computeStats(items, totalG) {
 const RECIPES = {
   vanilj: {
     label: 'Vanilj',
-    base: 725,
+    base: 714,
     items: [
       { name: 'Grädde 40%', g: 215 },
       { name: 'Mjölk 3%', g: 275 },
       { name: 'Skummjölkspulver', g: 30 },
       { name: 'Sötad kondenserad mjölk', g: 40 },
-      { name: 'Strösocker', g: 63 },
-      { name: 'Atomiserad dextros', g: 24 },
+      { name: 'Strösocker', g: 48 },
+      { name: 'Atomiserad dextros', g: 28 },
       { name: 'Flytande äggula', g: 50 },
       { name: 'Bladgelatin', g: 1.7 },
       { name: 'Vaniljextrakt', g: 10, alt: { g: 2, label: 'vaniljpulver' } },
@@ -642,7 +660,8 @@ const RECIPES = {
       'Sila genom finmaskig sil. Kyl snabbt över isvattenbad.',
       'Mogna i kyl <strong>minst 12h</strong>. Vispa upp innan churning.',
       'Wilfa: 30–35 min till soft-serve. Frys 4h för fast skopglass.'
-    ]
+    ],
+    note: 'Strösocker sänkt 63→48g, dextros höjd 24→28g (2026-07-04, för sött vid test) — sötma nu ~12.0%, PAC 22.1/POD 12.9 fortsatt gröna/gränsfall, inte icy.'
   },
   choklad: {
     label: 'Choklad',
@@ -739,7 +758,7 @@ const RECIPES = {
   },
   kokos: {
     label: 'Kokos',
-    base: 630,
+    base: 618,
     fatTarget: 'rich',
     items: [
       { name: 'Grädde 40%', g: 137.5 },
@@ -747,7 +766,7 @@ const RECIPES = {
       { name: 'Skummjölkspulver', g: 15 },
       { name: 'Sötad kondenserad mjölk', g: 40 },
       { name: 'Reducerad kokosmjölk (från ~500g)', g: 180 },
-      { name: 'Strösocker', g: 52 },
+      { name: 'Strösocker', g: 40 },
       { name: 'Atomiserad dextros', g: 38 },
       { name: 'Flytande äggula', g: 60 },
       { name: 'Bladgelatin', g: 1.7 },
@@ -756,7 +775,7 @@ const RECIPES = {
     mognad: '12h',
     steps: [
       '<strong>Köp rätt kokosmjölk:</strong> Aroy-D Premium, Chaokoh eller annan högkvalitativ canned med 17–22% fett. <strong>INTE light</strong> och inte sockrad kokosdryck — för mycket vatten, för lite smak.',
-      '<strong>Reducera (dagen innan):</strong> Koka ~500g kokosmjölk i låg värme under omrörning tills du har <strong>180g</strong> koncentrat (mer aggressiv reduktion än tidigare för att hålla fett i schack). Smakar nu påtagligt kokos. Kyl helt.',
+      '<strong>Reducera (dagen innan):</strong> Koka ~500g kokosmjölk i låg värme under omrörning tills du har <strong>180g</strong> koncentrat. Smakar nu påtagligt kokos. Kyl helt. <strong>Väg koncentratet</strong> — om du får mer eller mindre än 180g (t.ex. hårdare reduktion eller mindre burk), fyll upp mellanskillnaden med <strong>Mjölk 3%</strong> så totalbasen ändå hamnar på 618g. Annars blir hela receptet (inte bara sockret) koncentrerat och för sött.',
       '<strong>Rosta kokosflakes (valfritt men gör glassen):</strong> Torrosta i panna eller ugn 175°C tills gyllenbruna, 5–8 min. Rör/vänd ofta — bränns snabbt. Kyl.',
       'Gelatin i kallt vatten 10 min.',
       'Värm grädde + mjölk + kall kokoskoncentratet tillsammans till 70°C (ingen curdling-risk — kokos är inte syrligt, till skillnad från passion).',
@@ -765,7 +784,7 @@ const RECIPES = {
       'Wilfa 30 min. <strong>Sista 2 min:</strong> häll in rostad kokos via lockets öppning.',
       'Frys 4h.'
     ],
-    note: 'PAC är nu i grön zon (~27) tack vare 38g <em>atomiserad dextros</em> (PAC 190) — glassen blir skopbar direkt ur frys utan att bli sötare. Fettet är medvetet högt (rich-target) — kokos är fettig av natur.'
+    note: 'Strösocker sänkt 52→40g (2026-07-04, för sött vid test) — sötma nu ~13.7%, PAC/POD fortsatt grön zon tack vare 38g <em>atomiserad dextros</em>. Fettet är medvetet högt (rich-target) — kokos är fettig av natur.'
   },
   kaffe: {
     label: 'Kaffe',
@@ -1093,7 +1112,7 @@ function render() {
   const factor = target / r.base;
 
   $('heroTitle').textContent = r.label;
-  $('recipeTitle').textContent = 'Recept · ' + r.label;
+  $('recipeTitle').innerHTML = '<span class="flavor-dot"></span>Recept · ' + r.label;
   document.body.className = 'theme-' + currentRecipe;
 
   // Wilfa-zon check
@@ -1164,13 +1183,15 @@ function render() {
   const pacKey = r.pacTarget === 'fruit' ? 'pacFruit' : 'pac';
   const fatKey = r.fatTarget === 'rich' ? 'fatRich' : 'fat';
   let statsHtml = [
-    fmt('Fett',    s.fat,     1, '%', fatKey),
-    fmt('Socker',  s.sugar,   1, '%'),
-    fmt('MSNF',    s.msnf,    1, '%', 'msnf'),
-    fmt('TS',      s.ts,      1, '%'),
-    fmt('PAC',     s.pac,     1, '',  pacKey),
-    fmt('POD',     s.pod,     1, '',  'pod'),
-    fmt('Gelatin', s.gelatinPerKg, 1, ' g/kg', 'gelatin')
+    fmt('Fett',      s.fat,     1, '%', fatKey),
+    fmt('Sötma',     s.sweet,   1, '%', 'sweet'),
+    fmt('K-mjölk',   s.kmjolkPct, 1, '%', 'kmjolk'),
+    fmt('Socker',    s.sugar,   1, '%'),
+    fmt('MSNF',      s.msnf,    1, '%', 'msnf'),
+    fmt('TS',        s.ts,      1, '%'),
+    fmt('PAC',       s.pac,     1, '',  pacKey),
+    fmt('POD',       s.pod,     1, '',  'pod'),
+    fmt('Gelatin',   s.gelatinPerKg, 1, ' g/kg', 'gelatin')
   ].join(' · ');
   statsHtml += '<br>Mognad <span>' + r.mognad + '</span> · Tempering <span>83°C</span> · Wilfa <span>30–40 min</span>';
   $('stats').innerHTML = statsHtml;

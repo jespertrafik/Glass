@@ -95,14 +95,14 @@ RECIPES = {
         {'name': 'Bladgelatin', 'g': 1.7},
     ]),
     'kokos': (650, [
-        {'name': 'Grädde 40%', 'g': 137.5}, {'name': 'Mjölk 3%', 'g': 112.5},
+        {'name': 'Grädde 40%', 'g': 110}, {'name': 'Mjölk 3%', 'g': 140},
         {'name': 'Skummjölkspulver', 'g': 15}, {'name': 'Sötad kondenserad mjölk', 'g': 40},
         {'name': 'Reducerad kokosmjölk (från ~500g)', 'g': 180}, {'name': 'Strösocker', 'g': 40},
         {'name': 'Atomiserad dextros', 'g': 38}, {'name': 'Flytande äggula', 'g': 60},
         {'name': 'Bladgelatin', 'g': 1.7}, {'name': 'Rostad kokosflakes (valfritt, sista 2 min)', 'g': 25},
     ]),
     'kaffe': (691, [
-        {'name': 'Grädde 40%', 'g': 251}, {'name': 'Kaffemjölk (mjölk 3% + infusionerat kaffe)', 'g': 205},
+        {'name': 'Grädde 40%', 'g': 200}, {'name': 'Kaffemjölk (mjölk 3% + infusionerat kaffe)', 'g': 256},
         {'name': 'Skummjölkspulver', 'g': 15}, {'name': 'Sötad kondenserad mjölk', 'g': 45},
         {'name': 'Strösocker', 'g': 75}, {'name': 'Flytande äggula', 'g': 75},
         {'name': 'Atomiserad dextros', 'g': 23}, {'name': 'Bladgelatin', 'g': 1.7},

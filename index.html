@@ -650,15 +650,15 @@ function applyPrepScale(text, r, items, factor) {
 const RECIPES = {
   vanilj: {
     label: 'Vanilj',
-    base: 698,
+    base: 728,
     items: [
       { name: 'Grädde 40%', g: 215 },
       { name: 'Mjölk 3%', g: 275 },
       { name: 'Skummjölkspulver', g: 30 },
       { name: 'Sötad kondenserad mjölk', g: 40 },
-      { name: 'Strösocker', g: 48 },
-      { name: 'Atomiserad dextros', g: 28 },
-      { name: 'Flytande äggula', g: 50 },
+      { name: 'Strösocker', g: 38 },
+      { name: 'Atomiserad dextros', g: 43 },
+      { name: 'Flytande äggula', g: 75 },
       { name: 'Bladgelatin', g: 1.7 },
       { name: 'Vaniljextrakt', g: 10, alt: { g: 2, label: 'vaniljpulver' } },
       { name: 'Salt', g: 0.7 }
@@ -675,7 +675,7 @@ const RECIPES = {
       'Mogna i kyl <strong>minst 12h</strong>. Vispa upp innan churning.',
       'Wilfa: 30–35 min till soft-serve. Frys 4h för fast skopglass.'
     ],
-    note: 'Strösocker sänkt 63→48g, dextros höjd 24→28g (2026-07-04, för sött vid test) — sötma nu ~12.0%, PAC 22.1/POD 12.9 fortsatt gröna/gränsfall, inte icy.'
+    note: '<strong>2026-07-08:</strong> Äggula 50→75g, socker 48→38g, dextros 28→43g — kaffe-inspirerad bas för mer kropp och mjukare frystextur. POD bibehålls.<br>Strösocker sänkt 63→48g, dextros höjd 24→28g (2026-07-04, för sött vid test).'
   },
   choklad: {
     label: 'Choklad',
@@ -836,15 +836,15 @@ const RECIPES = {
   },
   lakrits: {
     label: 'Salt lakrits',
-    base: 710,
+    base: 740,
     items: [
       { name: 'Grädde 40%', g: 210 },
       { name: 'Mjölk 3%', g: 280 },
       { name: 'Skummjölkspulver', g: 30 },
       { name: 'Sötad kondenserad mjölk', g: 35 },
-      { name: 'Strösocker', g: 62 },
-      { name: 'Atomiserad dextros', g: 24 },
-      { name: 'Flytande äggula', g: 50 },
+      { name: 'Strösocker', g: 52 },
+      { name: 'Atomiserad dextros', g: 39 },
+      { name: 'Flytande äggula', g: 75 },
       { name: 'Bladgelatin', g: 1.7 },
       { name: 'Lakritspulver (rå)', g: 14 },
       { name: 'Flingsalt', g: 3 }
@@ -858,7 +858,7 @@ const RECIPES = {
       'Av plattan → smält gelatin + k-mjölk i, vispa slätt. Sila → isbad → mogna <strong>12h</strong>.',
       'Wilfa 30–35 min. Frys 4h.'
     ],
-    note: 'Rålakritspulver (lakritsrot) ger djup, naturlig lakritssmak. Vill du ha äkta SALT lakrits: tillsätt 1–2g salmiaksalt (ammoniumklorid) med flingsaltet — börja lågt, salmiak är kraftfullt.'
+    note: '<strong>2026-07-08:</strong> Äggula 50→75g, socker 62→52g, dextros 24→39g — kaffe-inspirerad bas för mer kropp och mjukare frystextur. POD bibehålls.<br>Rålakritspulver (lakritsrot) ger djup, naturlig lakritssmak. Vill du ha äkta SALT lakrits: tillsätt 1–2g salmiaksalt (ammoniumklorid) med flingsaltet — börja lågt, salmiak är kraftfullt.'
   },
   vitchoklad: {
     label: 'Rostad vit choklad & kardemumma',
@@ -916,15 +916,15 @@ const RECIPES = {
   },
   earlgrey: {
     label: 'Earl Grey',
-    base: 696,
+    base: 726,
     items: [
       { name: 'Grädde 40%', g: 215 },
       { name: 'Mjölk 3%', g: 280 },
       { name: 'Skummjölkspulver', g: 30 },
       { name: 'Sötad kondenserad mjölk', g: 30 },
-      { name: 'Strösocker', g: 66 },
-      { name: 'Atomiserad dextros', g: 22 },
-      { name: 'Flytande äggula', g: 50 },
+      { name: 'Strösocker', g: 56 },
+      { name: 'Atomiserad dextros', g: 37 },
+      { name: 'Flytande äggula', g: 75 },
       { name: 'Bladgelatin', g: 1.7 },
       { name: 'Salt', g: 1 },
       { name: 'Earl Grey-te (löst, infuseras)', g: 9, excludeFromBase: true }
@@ -939,19 +939,19 @@ const RECIPES = {
       'Av plattan → smält gelatin + k-mjölk i, vispa slätt. Sila → isbad → mogna <strong>12h</strong>.',
       'Wilfa 30–35 min. Frys 4h.'
     ],
-    note: 'Bergamotten i Earl Grey ger en parfymerad citruston mot den krämiga basen. Dra INTE teet för länge (besk garvsyra). Löst te är bättre än påsar — mer arom.'
+    note: '<strong>2026-07-08:</strong> Äggula 50→75g, socker 66→56g, dextros 22→37g — kaffe-inspirerad bas för mer kropp och mjukare frystextur. POD bibehålls.<br>Bergamotten i Earl Grey ger en parfymerad citruston mot den krämiga basen. Dra INTE teet för länge (besk garvsyra). Löst te är bättre än påsar — mer arom.'
   },
   matcha: {
     label: 'Matcha',
-    base: 700,
+    base: 730,
     items: [
       { name: 'Grädde 40%', g: 210 },
       { name: 'Mjölk 3%', g: 278 },
       { name: 'Skummjölkspulver', g: 30 },
       { name: 'Sötad kondenserad mjölk', g: 30 },
-      { name: 'Strösocker', g: 68 },
-      { name: 'Atomiserad dextros', g: 22 },
-      { name: 'Flytande äggula', g: 50 },
+      { name: 'Strösocker', g: 58 },
+      { name: 'Atomiserad dextros', g: 37 },
+      { name: 'Flytande äggula', g: 75 },
       { name: 'Bladgelatin', g: 1.7 },
       { name: 'Matcha (ceremoniell)', g: 10 },
       { name: 'Salt', g: 0.5 }
@@ -966,19 +966,19 @@ const RECIPES = {
       'Av plattan → smält gelatin + k-mjölk i, vispa slätt. Sila → isbad → mogna <strong>12h</strong>.',
       'Wilfa 30–35 min. Frys 4h.'
     ],
-    note: 'Använd ceremoniell matcha (inte kulinarisk bakmatcha) för ren färg och mindre beska. 10g ger kraftig grön smak; sänk till 7g om du vill ha mildare. Sockret något högt för att balansera matchans bitterhet.'
+    note: '<strong>2026-07-08:</strong> Äggula 50→75g, socker 68→58g, dextros 22→37g — kaffe-inspirerad bas för mer kropp och mjukare frystextur. POD bibehålls.<br>Använd ceremoniell matcha (inte kulinarisk bakmatcha) för ren färg och mindre beska. 10g ger kraftig grön smak; sänk till 7g om du vill ha mildare. Sockret något högt för att balansera matchans bitterhet.'
   },
   romrussin: {
     label: 'Rom & russin',
-    base: 712,
+    base: 742,
     items: [
       { name: 'Grädde 40%', g: 212 },
       { name: 'Mjölk 3%', g: 278 },
       { name: 'Skummjölkspulver', g: 30 },
       { name: 'Sötad kondenserad mjölk', g: 35 },
-      { name: 'Strösocker', g: 64 },
-      { name: 'Atomiserad dextros', g: 22 },
-      { name: 'Flytande äggula', g: 50 },
+      { name: 'Strösocker', g: 54 },
+      { name: 'Atomiserad dextros', g: 37 },
+      { name: 'Flytande äggula', g: 75 },
       { name: 'Bladgelatin', g: 1.7 },
       { name: 'Salt', g: 1 },
       { name: 'Mörk rom', g: 18 },
@@ -994,19 +994,19 @@ const RECIPES = {
       'Av plattan → smält gelatin + k-mjölk i, vispa slätt. Rör i de 18g rom (efter värmen, så aromen behålls). Sila → isbad → mogna <strong>12h</strong>.',
       'Wilfa 30–35 min. <strong>Sista 2 min:</strong> häll i de avrunna rom-russinen via locköppningen. Frys 4h.'
     ],
-    note: 'Alkohol sänker fryspunkten — håll romen runt 18g + russinens skvätt, annars fryser glassen aldrig fast. Mörk rom ger mest karaktär. Russinen hålls utanför bas-balansen (de är inblandning, inte churn-bas).'
+    note: '<strong>2026-07-08:</strong> Äggula 50→75g, socker 64→54g, dextros 22→37g — kaffe-inspirerad bas för mer kropp och mjukare frystextur. POD bibehålls.<br>Alkohol sänker fryspunkten — håll romen runt 18g + russinens skvätt, annars fryser glassen aldrig fast. Mörk rom ger mest karaktär. Russinen hålls utanför bas-balansen (de är inblandning, inte churn-bas).'
   },
   saffran: {
     label: 'Saffran',
-    base: 694,
+    base: 724,
     items: [
       { name: 'Grädde 40%', g: 215 },
       { name: 'Mjölk 3%', g: 275 },
       { name: 'Skummjölkspulver', g: 30 },
       { name: 'Sötad kondenserad mjölk', g: 35 },
-      { name: 'Strösocker', g: 64 },
-      { name: 'Atomiserad dextros', g: 22 },
-      { name: 'Flytande äggula', g: 50 },
+      { name: 'Strösocker', g: 54 },
+      { name: 'Atomiserad dextros', g: 37 },
+      { name: 'Flytande äggula', g: 75 },
       { name: 'Bladgelatin', g: 1.7 },
       { name: 'Saffran', g: 0.5 },
       { name: 'Salt', g: 1 }
@@ -1022,7 +1022,7 @@ const RECIPES = {
       'Mogna i kyl <strong>minst 12h</strong> — saffranet blommar ut, färg och doft fördjupas markant över natten.',
       'Wilfa 30–35 min. Frys 4h.'
     ],
-    note: 'Saffran är intensivt — 0.5g räcker för 675g bas. Mortla alltid med socker först, annars fastnar trådarna och färgen blir ojämn. Lyxig gyllene paradglass.'
+    note: '<strong>2026-07-08:</strong> Äggula 50→75g, socker 64→54g, dextros 22→37g — kaffe-inspirerad bas för mer kropp och mjukare frystextur. POD bibehålls.<br>Saffran är intensivt — 0.5g räcker. Mortla alltid med socker först, annars fastnar trådarna och färgen blir ojämn. Lyxig gyllene paradglass.'
   },
   applekanel: {
     label: 'Äpple & kanel',
